@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://anna-struchenko.pp.ua/sitemap.xml
