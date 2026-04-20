@@ -821,13 +821,35 @@ h2 {
   box-shadow: var(--shadow);
 }
 
-.certificate-card img {
+.certificate-card > img {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
   padding: 10px;
   object-fit: contain;
   background: #fff;
+}
+
+.certificate-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px;
+  background: #fff;
+}
+
+.certificate-gallery img {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+  border-radius: 18px;
+  border: 1px solid rgba(63, 80, 129, 0.08);
+  object-fit: contain;
+  background: #fff;
+}
+
+.membership-pair .certificate-gallery img:last-child {
+  margin-top: 28px;
 }
 
 .certificate-copy {
@@ -844,6 +866,20 @@ h2 {
   margin: 0;
   color: var(--muted);
   line-height: 1.7;
+}
+
+.certificate-copy a {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 4px;
+  color: var(--accent-strong);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.certificate-copy a:hover,
+.certificate-copy a:focus-visible {
+  color: var(--accent-cool);
 }
 
 .cta-card {
@@ -1123,6 +1159,14 @@ h2 {
 
   .carousel-track {
     grid-auto-columns: 88%;
+  }
+
+  .certificate-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .membership-pair .certificate-gallery img:last-child {
+    margin-top: 0;
   }
 
   .footer-links,
