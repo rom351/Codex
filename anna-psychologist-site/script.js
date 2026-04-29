@@ -60,42 +60,15 @@ carouselButtons.forEach((button) => {
 });
 
 form?.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  const data = new FormData(form);
-  const payload = {
-    name: data.get("name")?.toString().trim() || "",
-    contactMethod: data.get("contactMethod")?.toString().trim() || "",
-    contactValue: data.get("contactValue")?.toString().trim() || "",
-    format: data.get("format")?.toString().trim() || "",
-    message: data.get("message")?.toString().trim() || "",
-    schedule: data.get("schedule")?.toString().trim() || "Не вказано",
-  };
-
-  if (!payload.name || !payload.contactMethod || !payload.contactValue || !payload.format || !payload.message) {
+  if (!form.checkValidity()) {
+    event.preventDefault();
     note.textContent = "Будь ласка, заповніть обов'язкові поля перед надсиланням.";
     note.classList.add("is-error");
     note.classList.remove("is-success");
     return;
   }
 
-  const subject = encodeURIComponent(`Заявка на консультацію: ${payload.name}`);
-  const body = encodeURIComponent(
-    [
-      `Ім'я: ${payload.name}`,
-      `Спосіб зв'язку: ${payload.contactMethod}`,
-      `Контакт: ${payload.contactValue}`,
-      `Формат: ${payload.format}`,
-      `Зручний час: ${payload.schedule}`,
-      "",
-      "Запит:",
-      payload.message,
-    ].join("\n")
-  );
-
-  note.textContent = "Поштовий застосунок відкрито. Якщо цього не сталося, напишіть на anna.stryuchenko@gmail.com.";
-  note.classList.add("is-success");
+  note.textContent = "Надсилаю заявку...";
   note.classList.remove("is-error");
-
-  window.location.href = `mailto:anna.stryuchenko@gmail.com?subject=${subject}&body=${body}`;
+  note.classList.add("is-success");
 });
