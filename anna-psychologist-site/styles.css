@@ -69,6 +69,70 @@ body::after {
   padding-bottom: 80px;
 }
 
+.thank-you-shell {
+  display: grid;
+  min-height: 100vh;
+  align-items: center;
+}
+
+.thank-you-page {
+  display: grid;
+  place-items: center;
+  padding: 48px 0;
+}
+
+.thank-you-card {
+  width: min(760px, 100%);
+  padding: 44px;
+  border-radius: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: var(--shadow);
+}
+
+.thank-you-visual {
+  margin: 10px 0 24px;
+}
+
+.thank-you-visual img {
+  display: block;
+  width: min(100%, 520px);
+  margin: 0 auto;
+}
+
+.thank-you-card h1 {
+  font-size: clamp(2.4rem, 5vw, 4.3rem);
+  margin-bottom: 18px;
+}
+
+.thank-you-lead {
+  max-width: 58ch;
+  margin: 0 0 28px;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.thank-you-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.thank-you-meta {
+  display: grid;
+  gap: 10px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.thank-you-meta p {
+  margin: 0;
+}
+
 .topbar {
   position: sticky;
   top: 16px;
@@ -736,6 +800,13 @@ h2 {
 .form-note {
   margin: 0;
   font-size: 0.92rem;
+}
+
+.honeypot-field {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .form-note.is-success {
