@@ -76,13 +76,31 @@
               "кризова підтримка",
               "співзалежність",
               "медіація"
-            }
+            ]
           }
         ]
       }
     </script>
   </head>
   <body>
+    <form
+      name="booking"
+      action="/thank-you.html"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      hidden
+    >
+      <input type="hidden" name="form-name" value="booking" />
+      <input type="text" name="bot-field" />
+      <input type="text" name="name" />
+      <input type="text" name="contactMethod" />
+      <input type="text" name="contactValue" />
+      <input type="text" name="format" />
+      <textarea name="message"></textarea>
+      <input type="text" name="schedule" />
+    </form>
+
     <div class="page-shell">
       <header class="topbar">
         <a class="brand" href="#hero">
@@ -343,236 +361,282 @@
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/psychotrauma-basics.jpg" alt="Сертифікат з основ психотравматерапії" />
+                <img src="assets/certificates/ibs-support.jpg" alt="Сертифікат із психологічної підтримки при синдромі подразненого кишечника" />
                 <div class="certificate-copy">
-                  <strong>Основи психотравматерапії</strong>
-                  <p>Підготовка з роботи з психотравмою та сертифікаційним знанням травматерапевта.</p>
+                  <strong>Психологічна підтримка при СПК</strong>
+                  <p>Спеціалізований курс із психологічного супроводу при синдромі подразненого кишечника.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/crisis-counseling-trauma.jpg" alt="Сертифікат з кризового консультування, травми та ПТСР" />
-                <div class="certificate-copy">
-                  <strong>Кризове консультування, травма, ПТСР</strong>
-                  <p>Навчання з консультування і психотерапії складних запитів: травма, насилля, втрата, ПТСР, робота з дітьми, підлітками та сім’ями.</p>
-                </div>
-              </article>
-              <article class="certificate-card">
-                <img src="assets/certificates/psychosomatics.jpg" alt="Сертифікат з психосоматики" />
-                <div class="certificate-copy">
-                  <strong>Робота з психосоматичними розладами</strong>
-                  <p>Курс із дитячої психосоматики, психосоматичних розладів у дні війни та психолого-діагностичної гри «Психосоматика».</p>
-                </div>
-              </article>
-              <article class="certificate-card">
-                <img src="assets/certificates/codependency-course.jpg" alt="Сертифікат з курсу про співзалежність" />
+                <img src="assets/certificates/co-dependency.jpg" alt="Сертифікат про роботу зі співзалежністю" />
                 <div class="certificate-copy">
                   <strong>Співзалежність</strong>
-                  <p>Практико-орієнтований курс для психологів про співзалежні відносини та особливості консультування в цій темі.</p>
+                  <p>Практико-орієнтований курс про розуміння феномену співзалежності та способи роботи з ним.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/military-psychology.jpg" alt="Сертифікат з психологічної допомоги військовим та їхнім родинам" />
+                <img src="assets/certificates/problem-management-plus.jpg" alt="Сертифікат Problem Management Plus" />
                 <div class="certificate-copy">
-                  <strong>Військова психологія та підтримка родин</strong>
-                  <p>Психологічна допомога та робота психолога з військовими й їхніми родинами у дні війни.</p>
-                </div>
-              </article>
-              <article class="certificate-card is-pair membership-pair">
-                <div class="certificate-gallery">
-                  <img src="assets/certificates/membership-cover.jpg" alt="Обкладинка членського квитка Інституту розвитку практичної психології" />
-                  <img src="assets/certificates/membership-card.jpg" alt="Членський квиток Інституту розвитку практичної психології" />
-                </div>
-                <div class="certificate-copy">
-                  <strong>Членство в професійній організації</strong>
-                  <p>Членський квиток ГО «Інститут розвитку практичної психології» як підтвердження професійної належності та участі в спільноті.</p>
+                  <strong>Problem Management Plus (PM+)</strong>
+                  <p>Навчання від Всесвітньої організації охорони здоров'я з низькоінтенсивної психологічної інтервенції для дорослих, які переживають дистрес.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/dialogue-mediation.jpg" alt="Сертифікат з діалогу та медіації" />
+                <img src="assets/certificates/trauma-stabilization.jpg" alt="Сертифікат з психотравматерапії та стабілізації" />
                 <div class="certificate-copy">
-                  <strong>Діалог та медіація</strong>
-                  <p>Курс про кроки до порозуміння, дієві інструменти медіації та комунікації у складних ситуаціях.</p>
+                  <strong>Психотравматерапія і стабілізація</strong>
+                  <p>Базовий курс із психотравматерапії: стратегії стабілізації та роботи з наслідками травматичних подій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/school-mediation-basics.jpg" alt="Сертифікат з базових навичок медіатора шкільної служби порозуміння" />
+                <img src="assets/certificates/trauma-therapy-complex-ptsd.jpg" alt="Сертифікат зі складного ПТСР та комплексної травми" />
                 <div class="certificate-copy">
-                  <strong>Базові навички медіатора</strong>
-                  <p>Підготовка з медіації та шкільної служби розв’язання конфліктів.</p>
+                  <strong>Складний ПТСР і комплексна травма</strong>
+                  <p>Спеціалізований курс про посттравматичні розлади, тривалі наслідки насильства та методи психологічної допомоги.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/anti-bullying-skills.jpg" alt="Сертифікат з розвитку навичок протидії булінгу" />
+                <img src="assets/certificates/war-children-teenagers.jpg" alt="Сертифікат про психологічну підтримку дітей і підлітків під час війни" />
                 <div class="certificate-copy">
-                  <strong>Протидія булінгу в дитячому середовищі</strong>
-                  <p>Триденний тренінг з розвитку навичок протидії булінгу для представників педагогічних колективів.</p>
+                  <strong>Психологічна підтримка дітей і підлітків під час війни</strong>
+                  <p>Підготовка до роботи з дітьми та підлітками в умовах стресу, війни, втрати безпеки та вимушених змін.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/bullying-prevention-wartime.jpg" alt="Свідоцтво про підвищення кваліфікації з теми протидії булінгу в умовах воєнного стану" />
+                <img src="assets/certificates/war-family-cbt.jpg" alt="Сертифікат з психології війни та підтримки сім'ї" />
                 <div class="certificate-copy">
-                  <strong>Булінг: нові реалії воєнного стану</strong>
-                  <p>Підвищення кваліфікації з теми запобігання та протидії булінгу в закладах освіти в умовах війни.</p>
+                  <strong>Психологія війни та сімейна підтримка</strong>
+                  <p>Навчання з питань переживання війни, взаємин у сім'ї, психологічної допомоги дорослим і дітям.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/child-interviewing-violence.jpg" alt="Сертифікат з питань опитування дітей, які стали жертвами або свідками насильства" />
+                <img src="assets/certificates/crisis-violence-ptsd.jpg" alt="Сертифікат кризове консультування, насильство, ПТСР" />
                 <div class="certificate-copy">
-                  <strong>Опитування дітей у випадках насильства</strong>
-                  <p>Навчання з теми опитування дітей, які стали жертвами або свідками насильства, а також вчинили насильство.</p>
+                  <strong>Кризове консультування, насильство, ПТСР</strong>
+                  <p>Курс про наслідки насильства, кризові стани, втрату та побудову безпечної підтримки у складних обставинах.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/violence-prevention-women.jpg" alt="Сертифікат з попередження насильства в сім’ї та щодо жінок" />
+                <img src="assets/certificates/safe-spaces.jpg" alt="Сертифікат Safe Spaces Friendly and Supportive" />
                 <div class="certificate-copy">
-                  <strong>Попередження насильства в сім’ї та щодо жінок</strong>
-                  <p>Тематичний тренінг у рамках проєкту покращення доступу до соціальних послуг в Україні.</p>
+                  <strong>Safe Spaces: Friendly and Supportive Spaces</strong>
+                  <p>Підготовка до створення дружніх і безпечних просторів для дітей, підлітків та вразливих груп.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/family-attachment-support.jpg" alt="Сертифікат програми ПОРУЧ" />
+                <img src="assets/certificates/gender-violence-consulting.jpg" alt="Сертифікат щодо консультування постраждалих від гендерно зумовленого насильства" />
                 <div class="certificate-copy">
-                  <strong>Підтримка батьків і дітей</strong>
-                  <p>Програма «ПОРУЧ» з технік зцілення для батьків, осіб, що їх замінюють, та спеціалістів, які працюють з дітьми.</p>
+                  <strong>Консультування постраждалих від гендерно зумовленого насильства</strong>
+                  <p>Практичний курс щодо психологічної допомоги людям, які пережили насильство.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/psychological-emotional-support.jpg" alt="Сертифікат курсу з психологічно-емоційної підтримки" />
+                <img src="assets/certificates/grief-loss-ptsd.jpg" alt="Сертифікат з втрати, горювання та ПТСР" />
                 <div class="certificate-copy">
-                  <strong>Психологічно-емоційна підтримка</strong>
-                  <p>Підвищення кваліфікації за темою психологічно-емоційної підтримки дітей у кризових обставинах.</p>
+                  <strong>Втрати, горювання та ПТСР</strong>
+                  <p>Додаткове навчання про психологічний супровід втрати, травматичних подій та ПТСР.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/gbv-emergencies-standards.jpg" alt="Certificate of achievement on gender-based violence in emergencies programming" />
+                <img src="assets/certificates/military-psychology.jpg" alt="Сертифікат із військової психології" />
                 <div class="certificate-copy">
-                  <strong>GBV in Emergencies Programming</strong>
-                  <p>Міжвідомчі мінімальні стандарти щодо гендерно зумовленого насильства в надзвичайних ситуаціях.</p>
+                  <strong>Військова психологія</strong>
+                  <p>Базова підготовка у темі психологічної підтримки військових, ветеранів і родин у період війни.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/gbv-disclosures.jpg" alt="Certificate on responding to gender-based violence disclosures" />
+                <img src="assets/certificates/leadership-social-emotional.jpg" alt="Сертифікат з соціально-емоційного навчання та розвитку лідерства" />
                 <div class="certificate-copy">
-                  <strong>Responding to GBV Disclosures</strong>
-                  <p>Курс про коректне реагування на розкриття випадків гендерно зумовленого насильства.</p>
+                  <strong>Соціально-емоційне навчання та лідерство</strong>
+                  <p>Навчальні програми для освітнього середовища, розвитку навичок емоційної стійкості, комунікації та лідерства.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/psea-course.jpg" alt="Certificate of completion on prevention of sexual exploitation and abuse" />
+                <img src="assets/certificates/mediation-and-conflict.jpg" alt="Сертифікат із медіації та вирішення конфліктів" />
                 <div class="certificate-copy">
-                  <strong>Prevention of Sexual Exploitation and Abuse</strong>
-                  <p>Навчання з попередження сексуальної експлуатації та зловживань у гуманітарному середовищі.</p>
+                  <strong>Медіація та вирішення конфліктів</strong>
+                  <p>Практика медіації, профілактики конфліктів, безпечної комунікації та побудови порозуміння.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/humanitarian-standards.jpg" alt="Certificate of completion on Core Humanitarian Standard" />
+                <img src="assets/certificates/bullying-prevention.jpg" alt="Сертифікат про протидію булінгу" />
                 <div class="certificate-copy">
-                  <strong>Core Humanitarian Standard</strong>
-                  <p>Базовий стандарт надання гуманітарної допомоги як частина сучасної професійної етики і практики.</p>
+                  <strong>Протидія булінгу та безпечне середовище</strong>
+                  <p>Освітні програми з профілактики булінгу, побудови безпечного середовища та психологічної підтримки в освітніх закладах.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/public-speaking-coaching.jpg" alt="Сертифікат з ораторського мистецтва та коучингу" />
+                <img src="assets/certificates/photo_01_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 1" />
                 <div class="certificate-copy">
-                  <strong>Ораторське мистецтво та коучинг</strong>
-                  <p>Програма з публічної комунікації, коучингової взаємодії та змістовного проведення сесій.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_3_2026-04-18_22-24-44.jpg" alt="Сертифікат з ефективних гендерно-орієнтованих програм для неповнолітніх у конфлікті з законом" />
+                <img src="assets/certificates/photo_02_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 2" />
                 <div class="certificate-copy">
-                  <strong>Гендерно-орієнтовані програми</strong>
-                  <p>Сертифікат семінару-тренінгу для неповнолітніх у конфлікті з законом.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_4_2026-04-18_22-24-44.jpg" alt="Сертифікат з мотиваційного інтерв’ювання" />
+                <img src="assets/certificates/photo_03_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 3" />
                 <div class="certificate-copy">
-                  <strong>Мотиваційне інтерв’ювання</strong>
-                  <p>Тренінг з мотиваційного інтерв’ювання в роботі з неповнолітніми у конфлікті з законом.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_8_2026-04-18_22-24-44.jpg" alt="Сертифікат з профілактики сексуального насильства серед підлітків" />
+                <img src="assets/certificates/photo_04_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 4" />
                 <div class="certificate-copy">
-                  <strong>Профілактика сексуального насильства серед підлітків</strong>
-                  <p>Навчальна програма з теми профілактики сексуального насильства серед підлітків.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_9_2026-04-18_22-24-44.jpg" alt="Сертифікат з попередження торгівлі людьми" />
+                <img src="assets/certificates/photo_05_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 5" />
                 <div class="certificate-copy">
-                  <strong>Торгівля людьми: як вберегтися від небезпеки</strong>
-                  <p>Тренінг для тренерів про безпечну міграцію, працевлаштування та попередження торгівлі людьми.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_10_2026-04-18_22-24-44.jpg" alt="Сертифікат Autism Europe" />
+                <img src="assets/certificates/photo_06_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 6" />
                 <div class="certificate-copy">
-                  <strong>Аутизм: проблеми та досягнення</strong>
-                  <p>Семінар-консул з теми аутизму в світі та Україні.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_11_2026-04-18_22-24-44.jpg" alt="Certificate on art therapy with children and adolescents" />
+                <img src="assets/certificates/photo_07_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 7" />
                 <div class="certificate-copy">
-                  <strong>Art Therapy to Working with Children and Adolescents</strong>
-                  <p>Англомовна версія сертифіката спеціалізації з дитячої та підліткової арт-терапії.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_13_2026-04-18_22-24-44.jpg" alt="Сертифікат групової супервізії" />
+                <img src="assets/certificates/photo_08_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 8" />
                 <div class="certificate-copy">
-                  <strong>Групова супервізія</strong>
-                  <p>Проходження групової супервізії у контексті психосоціальної підтримки та роботи з конфліктами.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_14_2026-04-18_22-24-44.jpg" alt="Certificate on art therapy in family counseling" />
+                <img src="assets/certificates/photo_09_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 9" />
                 <div class="certificate-copy">
-                  <strong>Art Therapy in Family Counseling</strong>
-                  <p>Англомовна версія сертифіката зі спеціалізації в сімейній арт-терапії.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_17_2026-04-18_22-24-44.jpg" alt="Сертифікат фестивалю арт-терапії Art-Praktik" />
+                <img src="assets/certificates/photo_10_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 10" />
                 <div class="certificate-copy">
-                  <strong>ART-PRAKTIK</strong>
-                  <p>Участь у міжнародному фестивалі арт-терапії як частина професійного розвитку.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_18_2026-04-18_22-24-44.jpg" alt="Сертифікати фестивалю арт-терапії Art-Praktik" />
+                <img src="assets/certificates/photo_11_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 11" />
                 <div class="certificate-copy">
-                  <strong>ART-PRAKTIK: додаткові фестивальні сертифікати</strong>
-                  <p>Додаткові сертифікати участі у міжнародному фестивалі арт-терапії.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_19_2026-04-18_22-24-44.jpg" alt="Сертифікати фестивалю 4 сезони" />
+                <img src="assets/certificates/photo_12_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 12" />
                 <div class="certificate-copy">
-                  <strong>Фестиваль «4 сезони»</strong>
-                  <p>Сертифікати участі як тренера у регіональних фестивалях психології та розвитку.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_20_2026-04-18_22-24-44.jpg" alt="Диплом фестивалю PRO PSY" />
+                <img src="assets/certificates/photo_13_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 13" />
                 <div class="certificate-copy">
-                  <strong>PRO PSY 2019</strong>
-                  <p>Диплом за активну участь у фестивалі практичних психологів і соціальних педагогів.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_21_2026-04-18_22-24-44.jpg" alt="Свідоцтво про підвищення кваліфікації з соціально-педагогічної підтримки" />
+                <img src="assets/certificates/photo_14_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 14" />
                 <div class="certificate-copy">
-                  <strong>Підвищення кваліфікації з соціально-педагогічної підтримки</strong>
-                  <p>Свідоцтво про підвищення кваліфікації та детальний перелік опрацьованих тем.</p>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
                 </div>
               </article>
               <article class="certificate-card">
-                <img src="assets/certificates/photo_25_2026-04-18_22-24-44.jpg" alt="Сертифікат курсу сексуальна освіта" />
+                <img src="assets/certificates/photo_15_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 15" />
                 <div class="certificate-copy">
-                  <strong>Сексуальна освіта</strong>
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_16_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 16" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_17_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 17" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_18_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 18" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_19_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 19" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_20_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 20" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_21_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 21" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_22_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 22" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_23_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 23" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_24_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 24" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
+                  <p>Документ з освітнього або професійного напряму, включений до загальної добірки кваліфікацій.</p>
+                </div>
+              </article>
+              <article class="certificate-card">
+                <img src="assets/certificates/photo_25_2026-04-18_22-24-44.jpg" alt="Додатковий сертифікат 25" />
+                <div class="certificate-copy">
+                  <strong>Додатковий сертифікат</strong>
                   <p>Онлайн-курс про безпечну сексуальну освіту, комунікацію і критичне мислення.</p>
                 </div>
               </article>
@@ -813,7 +877,17 @@
               </div>
             </div>
 
-            <form class="booking-form reveal" id="booking-form">
+            <form
+              class="booking-form reveal"
+              id="booking-form"
+              name="booking"
+              action="/thank-you.html"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+            >
+              <input type="hidden" name="form-name" value="booking" />
+              <input type="text" name="bot-field" tabindex="-1" autocomplete="off" class="honeypot-field" />
               <label>
                 Ім'я
                 <input type="text" name="name" placeholder="Як до вас звертатися" required />
@@ -858,7 +932,7 @@
               </label>
               <button class="button button-primary" type="submit">Надіслати заявку</button>
               <p class="form-note" id="form-note">
-                Після надсилання відкриється чернетка листа у вашому поштовому застосунку.
+                Після надсилання заявка буде автоматично відправлена через форму сайту.
               </p>
             </form>
           </div>
