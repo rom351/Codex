@@ -60,7 +60,7 @@ carouselButtons.forEach((button) => {
   });
 });
 
-if (additionalCertificatesGrid && !additionalCertificatesGrid.children.length) {
+if (additionalCertificatesGrid) {
   fetch("index.html")
     .then((response) => response.text())
     .then((html) => {

@@ -545,7 +545,7 @@ h2 {
 .pricing-grid,
 .services-grid,
 .timeline,
-.testimonials-grid,
+.quotes,
 .booking-layout,
 .faq-grid {
   display: grid;
@@ -576,7 +576,7 @@ h2 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.testimonials-grid {
+.quotes {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -599,7 +599,7 @@ h2 {
 .pricing-card,
 .service-card,
 .timeline-card,
-.testimonial-card,
+.quote-card,
 .faq-card,
 .contact-card,
 .booking-form {
@@ -615,7 +615,7 @@ h2 {
 .pricing-card::before,
 .service-card::before,
 .timeline-card::before,
-.testimonial-card::before,
+.quote-card::before,
 .faq-card::before,
 .contact-card::before,
 .booking-form::before,
@@ -635,7 +635,7 @@ h2 {
 .pricing-card p,
 .service-card p,
 .timeline-card p,
-.testimonial-card p,
+.quote-card p,
 .faq-card p,
 .contact-card p,
 .booking-copy li,
@@ -792,33 +792,23 @@ h2 {
   background: linear-gradient(90deg, rgba(255, 79, 135, 0.34), transparent);
 }
 
-.testimonial-card {
-  min-height: 250px;
-  display: grid;
-  gap: 16px;
+.quote-card {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 249, 239, 0.82)),
     linear-gradient(135deg, rgba(255, 191, 71, 0.1), rgba(255, 107, 107, 0.06));
 }
 
-.testimonial-meta {
-  display: grid;
-  gap: 6px;
-}
-
-.testimonial-meta strong {
-  font-size: 1rem;
-}
-
-.testimonial-meta span {
-  color: var(--accent-strong);
-  line-height: 1.55;
-}
-
-.testimonial-card p {
-  margin: 0;
-  font-size: 1rem;
+.quote-card p {
+  font-size: 1.18rem;
   color: var(--text);
+}
+
+.quote-card span {
+  color: var(--accent-strong);
 }
 
 .booking-copy {
@@ -1020,35 +1010,6 @@ h2 {
   color: var(--accent-cool);
 }
 
-.certificate-card-document {
-  display: flex;
-  flex-direction: column;
-}
-
-.certificate-document {
-  display: grid;
-  place-items: center;
-  min-height: 260px;
-  background:
-    radial-gradient(circle at top right, rgba(255, 191, 71, 0.18), transparent 34%),
-    linear-gradient(135deg, rgba(255, 79, 135, 0.1), rgba(54, 200, 196, 0.08));
-}
-
-.certificate-document span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 104px;
-  height: 104px;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.86);
-  color: var(--accent-strong);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  box-shadow: var(--shadow);
-}
-
 .certificates-actions {
   display: flex;
   justify-content: center;
@@ -1174,7 +1135,7 @@ h2 {
   .expertise-grid,
   .services-grid,
   .timeline,
-  .testimonials-grid,
+  .quotes,
   .faq-grid,
   .footer,
   .cta-card {
@@ -1308,7 +1269,7 @@ h2 {
   .expertise-card,
   .service-card,
   .timeline-card,
-  .testimonial-card,
+  .quote-card,
   .faq-card,
   .contact-card,
   .booking-form,
@@ -1379,4 +1340,138 @@ h2 {
     justify-content: flex-start;
     text-align: left;
   }
+}
+
+
+/* Added structure: reviews, FAQ, privacy */
+.reviews-grid,
+.faq-list-page,
+.policy-content {
+  display: grid;
+  gap: 18px;
+}
+
+.reviews-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.review-card,
+.policy-card {
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: var(--shadow-soft);
+}
+
+.review-card h3,
+.policy-card h3 {
+  margin: 0 0 10px;
+}
+
+.review-card p,
+.policy-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.review-card .button {
+  margin-top: 18px;
+}
+
+.consent-field {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.consent-field input {
+  width: auto;
+  margin-top: 5px;
+}
+
+.consent-field a {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.certificates-archive-grid .certificate-card {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 760px) {
+  .certificates-archive-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .review-card,
+  .policy-card {
+    padding: 20px;
+  }
+}
+
+
+/* Testimonials / reviews */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.testimonial-card {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.testimonial-card::before {
+  content: "“";
+  position: absolute;
+  right: 18px;
+  top: 4px;
+  font-size: 5rem;
+  line-height: 1;
+  color: rgba(255, 79, 135, 0.12);
+  font-family: Georgia, serif;
+}
+
+.testimonial-meta {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonial-meta strong {
+  font-size: 1.02rem;
+  color: var(--text);
+}
+
+.testimonial-meta span {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.testimonial-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+  position: relative;
+  z-index: 1;
+}
+
+.reviews-page-shell .section.testimonials {
+  padding-top: 18px;
 }

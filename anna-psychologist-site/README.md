@@ -2,6 +2,17 @@
 
 This folder is ready for standalone static hosting.
 
+## Netlify form
+
+The booking form is configured for Netlify Forms.
+
+Checklist after deploy:
+
+1. Redeploy the site from this folder/project.
+2. In Netlify, confirm the `booking` form appears in the Forms section.
+3. Add or verify email notifications for submissions to `anna.stryuchenko@gmail.com`.
+4. Submit one live test from the deployed domain and confirm redirect to `thank-you.html`.
+
 ## Local preview
 
 ```bash
