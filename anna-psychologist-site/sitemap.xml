@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://anna-struchenko.pp.ua/</loc>
-    <lastmod>2026-04-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://anna-struchenko.pp.ua/</loc></url>
+  <url><loc>https://anna-struchenko.pp.ua/certificates.html</loc></url>
+  <url><loc>https://anna-struchenko.pp.ua/reviews.html</loc></url>
+  <url><loc>https://anna-struchenko.pp.ua/faq.html</loc></url>
+  <url><loc>https://anna-struchenko.pp.ua/privacy.html</loc></url>
 </urlset>
