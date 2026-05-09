@@ -541,9 +541,11 @@ h2 {
 
 .about-grid,
 .expertise-grid,
+.requests-grid,
+.pricing-grid,
 .services-grid,
 .timeline,
-.quotes,
+.testimonials-grid,
 .booking-layout,
 .faq-grid {
   display: grid;
@@ -558,6 +560,14 @@ h2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.requests-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pricing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .services-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -566,7 +576,7 @@ h2 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.quotes {
+.testimonials-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -585,9 +595,11 @@ h2 {
 
 .about-card,
 .expertise-card,
+.request-card,
+.pricing-card,
 .service-card,
 .timeline-card,
-.quote-card,
+.testimonial-card,
 .faq-card,
 .contact-card,
 .booking-form {
@@ -599,9 +611,11 @@ h2 {
 
 .about-card::before,
 .expertise-card::before,
+.request-card::before,
+.pricing-card::before,
 .service-card::before,
 .timeline-card::before,
-.quote-card::before,
+.testimonial-card::before,
 .faq-card::before,
 .contact-card::before,
 .booking-form::before,
@@ -617,9 +631,11 @@ h2 {
 
 .about-card p,
 .expertise-card p,
+.request-card p,
+.pricing-card p,
 .service-card p,
 .timeline-card p,
-.quote-card p,
+.testimonial-card p,
 .faq-card p,
 .contact-card p,
 .booking-copy li,
@@ -631,6 +647,8 @@ h2 {
 
 .about-card h3,
 .expertise-card h3,
+.request-card h3,
+.pricing-card h3,
 .service-card h3,
 .timeline-card h3,
 .faq-card h3,
@@ -642,6 +660,45 @@ h2 {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 247, 238, 0.86)),
     linear-gradient(135deg, rgba(255, 191, 71, 0.1), rgba(143, 124, 255, 0.08));
+}
+
+.request-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(246, 251, 255, 0.84)),
+    linear-gradient(135deg, rgba(54, 200, 196, 0.08), rgba(255, 191, 71, 0.08));
+}
+
+.pricing-card {
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(246, 251, 255, 0.84)),
+    linear-gradient(135deg, rgba(255, 191, 71, 0.08), rgba(255, 79, 135, 0.06));
+  box-shadow: var(--shadow);
+}
+
+.pricing-card.featured {
+  background:
+    radial-gradient(circle at top right, rgba(255, 191, 71, 0.22), transparent 34%),
+    linear-gradient(135deg, rgba(255, 238, 244, 0.94), rgba(238, 251, 252, 0.92));
+}
+
+.pricing-label {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--accent-strong);
+}
+
+.pricing-value {
+  margin: 14px 0 12px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  line-height: 1;
+  color: var(--text);
 }
 
 .service-card {
@@ -735,23 +792,33 @@ h2 {
   background: linear-gradient(90deg, rgba(255, 79, 135, 0.34), transparent);
 }
 
-.quote-card {
-  min-height: 220px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.testimonial-card {
+  min-height: 250px;
+  display: grid;
+  gap: 16px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 249, 239, 0.82)),
     linear-gradient(135deg, rgba(255, 191, 71, 0.1), rgba(255, 107, 107, 0.06));
 }
 
-.quote-card p {
-  font-size: 1.18rem;
-  color: var(--text);
+.testimonial-meta {
+  display: grid;
+  gap: 6px;
 }
 
-.quote-card span {
+.testimonial-meta strong {
+  font-size: 1rem;
+}
+
+.testimonial-meta span {
   color: var(--accent-strong);
+  line-height: 1.55;
+}
+
+.testimonial-card p {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text);
 }
 
 .booking-copy {
@@ -953,6 +1020,65 @@ h2 {
   color: var(--accent-cool);
 }
 
+.certificate-card-document {
+  display: flex;
+  flex-direction: column;
+}
+
+.certificate-document {
+  display: grid;
+  place-items: center;
+  min-height: 260px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 191, 71, 0.18), transparent 34%),
+    linear-gradient(135deg, rgba(255, 79, 135, 0.1), rgba(54, 200, 196, 0.08));
+}
+
+.certificate-document span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--accent-strong);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
+.certificates-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.certificates-toggle {
+  min-width: 280px;
+}
+
+.certificates-archive-shell {
+  display: grid;
+  gap: 24px;
+  padding: 72px 0 28px;
+}
+
+.certificates-archive-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.certificates-archive-grid .certificate-card {
+  height: 100%;
+}
+
+.archive-back-link {
+  width: fit-content;
+}
+
 .cta-card {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -1048,7 +1174,7 @@ h2 {
   .expertise-grid,
   .services-grid,
   .timeline,
-  .quotes,
+  .testimonials-grid,
   .faq-grid,
   .footer,
   .cta-card {
@@ -1083,6 +1209,10 @@ h2 {
 
   .carousel-track {
     grid-auto-columns: minmax(300px, 72%);
+  }
+
+  .certificates-archive-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1178,7 +1308,7 @@ h2 {
   .expertise-card,
   .service-card,
   .timeline-card,
-  .quote-card,
+  .testimonial-card,
   .faq-card,
   .contact-card,
   .booking-form,
@@ -1230,6 +1360,10 @@ h2 {
 
   .carousel-track {
     grid-auto-columns: 88%;
+  }
+
+  .certificates-archive-grid {
+    grid-template-columns: 1fr;
   }
 
   .certificate-gallery {

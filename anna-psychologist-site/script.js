@@ -4,6 +4,7 @@ const revealItems = document.querySelectorAll(".reveal");
 const carouselButtons = document.querySelectorAll("[data-carousel]");
 const contactMethodField = form?.querySelector("[name='contactMethod']");
 const contactValueField = form?.querySelector("[name='contactValue']");
+const additionalCertificatesGrid = document.querySelector("#additional-certificates-grid");
 
 const contactPlaceholders = {
   Telegram: "@username",
@@ -58,6 +59,26 @@ carouselButtons.forEach((button) => {
     });
   });
 });
+
+if (additionalCertificatesGrid && !additionalCertificatesGrid.children.length) {
+  fetch("index.html")
+    .then((response) => response.text())
+    .then((html) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      const template = doc.querySelector("#additional-certificates-template");
+
+      if (!template) {
+        additionalCertificatesGrid.innerHTML = "<p>Не вдалося завантажити додаткові сертифікати.</p>";
+        return;
+      }
+
+      additionalCertificatesGrid.innerHTML = template.innerHTML;
+    })
+    .catch(() => {
+      additionalCertificatesGrid.innerHTML = "<p>Не вдалося завантажити додаткові сертифікати.</p>";
+    });
+}
 
 form?.addEventListener("submit", (event) => {
   if (!form.checkValidity()) {
