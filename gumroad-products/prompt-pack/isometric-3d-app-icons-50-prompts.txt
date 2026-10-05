@@ -1,0 +1,154 @@
+50 Midjourney Prompts: Isometric 3D App Icons
+============================================================
+
+HOW TO USE
+------------------------------------------------------------
+1. Open Midjourney and start a new image.
+2. Copy any prompt from this pack and paste it in full, including the parameters at the end.
+3. Press Enter. Midjourney returns a set of icon variations.
+4. Pick your favorite, upscale it, and download the result.
+
+TIPS
+------------------------------------------------------------
+- Change the colors: replace the palette words (for example "blue and white" with "black and gold").
+- Change the object: replace the part after "app icon," with anything you like, such as "a rocket" or "a camera".
+- Change the material: swap "glossy plastic" for "matte clay", "frosted glass" or "brushed metal".
+- Keep the icon free of text: add --no text at the end.
+- Parameters: --ar 1:1 keeps the icon square, --v 7 selects the model version. Adjust --v if you use another version.
+
+
+## COMMUNICATION
+
+[01] isometric 3D app icon, a glossy speech bubble with three typing dots, on a rounded square tile, glossy plastic, vibrant blue and white palette, soft studio lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[02] isometric 3D app icon, a sealed envelope with a tiny notification badge, on a rounded square tile, glossy plastic, vibrant blue and white palette, soft studio lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[03] isometric 3D app icon, a video camera with a rounded lens, on a rounded square tile, glossy plastic, vibrant blue and white palette, soft studio lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[04] isometric 3D app icon, a classic phone handset with sound waves, on a rounded square tile, glossy plastic, vibrant blue and white palette, soft studio lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[05] isometric 3D app icon, a ringing notification bell with a small badge, on a rounded square tile, glossy plastic, vibrant blue and white palette, soft studio lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## PRODUCTIVITY
+
+[06] isometric 3D app icon, a monthly calendar page with a highlighted date, on a rounded square tile, matte clay, warm orange and cream palette, soft shadows, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[07] isometric 3D app icon, a checklist notepad with ticked boxes, on a rounded square tile, matte clay, warm orange and cream palette, soft shadows, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[08] isometric 3D app icon, a round alarm clock with a bold timer ring, on a rounded square tile, matte clay, warm orange and cream palette, soft shadows, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[09] isometric 3D app icon, a manila folder with a floating document, on a rounded square tile, matte clay, warm orange and cream palette, soft shadows, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[10] isometric 3D app icon, a pencil writing on a sticky note, on a rounded square tile, matte clay, warm orange and cream palette, soft shadows, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## FINANCE
+
+[11] isometric 3D app icon, a leather wallet with a gold coin peeking out, on a rounded square tile, brushed metal and glass, emerald green and gold palette, subtle reflections, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[12] isometric 3D app icon, a credit card with a metallic chip, on a rounded square tile, brushed metal and glass, emerald green and gold palette, subtle reflections, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[13] isometric 3D app icon, a piggy bank with a falling coin, on a rounded square tile, brushed metal and glass, emerald green and gold palette, subtle reflections, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[14] isometric 3D app icon, a rising bar chart with a gold coin, on a rounded square tile, brushed metal and glass, emerald green and gold palette, subtle reflections, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[15] isometric 3D app icon, a compact calculator with glowing keys, on a rounded square tile, brushed metal and glass, emerald green and gold palette, subtle reflections, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## HEALTH & FITNESS
+
+[16] isometric 3D app icon, a heart with a pulse line running through it, on a rounded square tile, soft rubber, coral red and mint palette, gentle rim light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[17] isometric 3D app icon, a chunky dumbbell on a mat, on a rounded square tile, soft rubber, coral red and mint palette, gentle rim light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[18] isometric 3D app icon, a running shoe with motion lines, on a rounded square tile, soft rubber, coral red and mint palette, gentle rim light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[19] isometric 3D app icon, a water drop with ripples, on a rounded square tile, soft rubber, coral red and mint palette, gentle rim light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[20] isometric 3D app icon, a fresh apple with a leaf, on a rounded square tile, soft rubber, coral red and mint palette, gentle rim light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## TRAVEL
+
+[21] isometric 3D app icon, a paper airplane over a dotted route, on a rounded square tile, smooth plastic, sky blue and sunset orange palette, bright daylight, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[22] isometric 3D app icon, a map pin standing on a folded map, on a rounded square tile, smooth plastic, sky blue and sunset orange palette, bright daylight, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[23] isometric 3D app icon, a rolling suitcase with a travel tag, on a rounded square tile, smooth plastic, sky blue and sunset orange palette, bright daylight, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[24] isometric 3D app icon, a compass with a glowing needle, on a rounded square tile, smooth plastic, sky blue and sunset orange palette, bright daylight, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[25] isometric 3D app icon, a retro instant camera with a lens flare, on a rounded square tile, smooth plastic, sky blue and sunset orange palette, bright daylight, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## MUSIC & MEDIA
+
+[26] isometric 3D app icon, over-ear headphones with a soft glow, on a rounded square tile, translucent glass, neon purple and magenta palette, glowing edges, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[27] isometric 3D app icon, a floating music note, on a rounded square tile, translucent glass, neon purple and magenta palette, glowing edges, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[28] isometric 3D app icon, a play button inside a glossy disc, on a rounded square tile, translucent glass, neon purple and magenta palette, glowing edges, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[29] isometric 3D app icon, a studio microphone on a stand, on a rounded square tile, translucent glass, neon purple and magenta palette, glowing edges, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[30] isometric 3D app icon, a film clapperboard with a play symbol, on a rounded square tile, translucent glass, neon purple and magenta palette, glowing edges, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## SHOPPING
+
+[31] isometric 3D app icon, a shopping bag with rope handles, on a rounded square tile, satin paper and plastic, pastel pink and yellow palette, soft diffused light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[32] isometric 3D app icon, a shopping cart with floating boxes, on a rounded square tile, satin paper and plastic, pastel pink and yellow palette, soft diffused light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[33] isometric 3D app icon, a gift box with a ribbon bow, on a rounded square tile, satin paper and plastic, pastel pink and yellow palette, soft diffused light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[34] isometric 3D app icon, a price tag with a percent sign, on a rounded square tile, satin paper and plastic, pastel pink and yellow palette, soft diffused light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[35] isometric 3D app icon, a tiny storefront with a striped awning, on a rounded square tile, satin paper and plastic, pastel pink and yellow palette, soft diffused light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## SOCIAL & PHOTOS
+
+[36] isometric 3D app icon, a camera lens with colorful aperture blades, on a rounded square tile, iridescent gloss, gradient teal and violet palette, soft glow, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[37] isometric 3D app icon, a photo gallery of stacked pictures, on a rounded square tile, iridescent gloss, gradient teal and violet palette, soft glow, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[38] isometric 3D app icon, a heart like button with a glow, on a rounded square tile, iridescent gloss, gradient teal and violet palette, soft glow, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[39] isometric 3D app icon, a share arrow connecting three nodes, on a rounded square tile, iridescent gloss, gradient teal and violet palette, soft glow, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[40] isometric 3D app icon, a friendly user avatar silhouette in a circle, on a rounded square tile, iridescent gloss, gradient teal and violet palette, soft glow, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## UTILITIES
+
+[41] isometric 3D app icon, a metal gear with a soft inner glow, on a rounded square tile, frosted glass and aluminum, cool grey and cyan palette, crisp lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[42] isometric 3D app icon, a magnifying glass with a reflective lens, on a rounded square tile, frosted glass and aluminum, cool grey and cyan palette, crisp lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[43] isometric 3D app icon, a padlock with a keyhole, on a rounded square tile, frosted glass and aluminum, cool grey and cyan palette, crisp lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[44] isometric 3D app icon, a cloud with an upload arrow, on a rounded square tile, frosted glass and aluminum, cool grey and cyan palette, crisp lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[45] isometric 3D app icon, a battery with a full charge indicator, on a rounded square tile, frosted glass and aluminum, cool grey and cyan palette, crisp lighting, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+
+## FOOD & LIFESTYLE
+
+[46] isometric 3D app icon, a steaming coffee cup on a saucer, on a rounded square tile, ceramic and wood, earthy green and terracotta palette, warm natural light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[47] isometric 3D app icon, a slice of pizza with melting cheese, on a rounded square tile, ceramic and wood, earthy green and terracotta palette, warm natural light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[48] isometric 3D app icon, a potted plant with fresh leaves, on a rounded square tile, ceramic and wood, earthy green and terracotta palette, warm natural light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[49] isometric 3D app icon, an open book with floating pages, on a rounded square tile, ceramic and wood, earthy green and terracotta palette, warm natural light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+[50] isometric 3D app icon, a sun peeking behind a small cloud, on a rounded square tile, ceramic and wood, earthy green and terracotta palette, warm natural light, minimalist composition, clean soft gradient background, centered, high detail, 3D render --ar 1:1 --v 7
+
+TERMS
+------------------------------------------------------------
+- You may use the prompts to create images for personal and commercial projects.
+- Please do not resell, share or redistribute this prompt pack itself.
+- This product is not affiliated with or endorsed by Midjourney, Inc.
+- Results vary between model versions and settings.
