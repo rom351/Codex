@@ -1,16 +1,77 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
+<% const failed = errors.length ? (form.kind === 'callback' ? 'callback' : 'message') : null; %>
 <nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a> / <span>Контакты</span></nav>
 <h1 class="page-title">Контакты</h1>
-<div class="prose-page">
-  <dl class="contacts">
-    <% if (shop.phone) { %><div><dt>Телефон</dt><dd><a href="tel:<%= shop.phone.replace(/[^\d+]/g, '') %>"><%= shop.phone %></a></dd></div><% } %>
-    <% if (shop.email) { %><div><dt>Почта</dt><dd><a href="mailto:<%= shop.email %>"><%= shop.email %></a></dd></div><% } %>
-    <% if (shop.address) { %><div><dt>Адрес</dt><dd><%= shop.address %></dd></div><% } %>
-    <div><dt>Время работы</dt><dd><%= shop.hours %></dd></div>
-  </dl>
-  <% if (!shop.phone && !shop.email && !shop.address) { %>
-  <p class="muted">Контактные данные магазина пока не заполнены.</p>
+
+<section class="info-cards info-cards-contacts" aria-label="Как с нами связаться">
+  <% if (shop.phones.length) { %>
+  <article class="info-card">
+    <h3>Телефон</h3>
+    <p class="contact-phones">
+      <% shop.phones.forEach((ph) => { %><a class="phone-big" href="tel:<%= ph.tel %>"><%= ph.display %></a><% }) %>
+    </p>
+    <p class="muted"><%= shop.hours %></p>
+  </article>
   <% } %>
+  <% if (shop.email) { %>
+  <article class="info-card">
+    <h3>Почта</h3>
+    <p><a href="mailto:<%= shop.email %>"><%= shop.email %></a></p>
+  </article>
+  <% } %>
+  <% if (shop.address) { %>
+  <article class="info-card">
+    <h3>Адрес</h3>
+    <p><%= shop.address %></p>
+    <% if (!shop.phones.length) { %><p class="muted"><%= shop.hours %></p><% } %>
+  </article>
+  <% } %>
+</section>
+
+<div class="forms-grid">
+  <section class="panel" id="callback" aria-labelledby="callback-h">
+    <h2 id="callback-h">Заказать звонок</h2>
+    <p class="muted">Оставьте имя и телефон — перезвоним в рабочее время.</p>
+    <% if (sent === 'callback') { %><div class="notice notice-ok" role="status">Спасибо! Заявка отправлена, мы скоро перезвоним.</div><% } %>
+    <% if (failed === 'callback') { %><div class="notice notice-error" role="alert"><ul class="plain"><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul></div><% } %>
+    <form method="post" action="/contacts">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="kind" value="callback">
+      <input type="hidden" name="source" value="contacts">
+      <div class="field"><label for="cb-name">Имя *</label>
+        <input id="cb-name" name="name" type="text" autocomplete="name" required maxlength="100" value="<%= failed === 'callback' ? (form.name || '') : '' %>"></div>
+      <div class="field"><label for="cb-phone">Телефон *</label>
+        <input id="cb-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="+380 50 123-45-67" value="<%= failed === 'callback' ? (form.phone || '') : '' %>"></div>
+      <div class="hp" aria-hidden="true"><label for="cb-website">Не заполняйте это поле</label><input id="cb-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+      <label class="check consent"><input type="checkbox" name="consent" required>
+        <span>Согласен(на) на обработку персональных данных согласно <a href="/privacy">политике конфиденциальности</a></span></label>
+      <button class="btn btn-primary" type="submit">Перезвоните мне</button>
+    </form>
+  </section>
+
+  <section class="panel" id="message" aria-labelledby="message-h">
+    <h2 id="message-h">Написать нам</h2>
+    <p class="muted">Задайте вопрос о модели, доставке или оплате.</p>
+    <% if (sent === 'message') { %><div class="notice notice-ok" role="status">Спасибо! Сообщение отправлено, мы ответим вам.</div><% } %>
+    <% if (failed === 'message') { %><div class="notice notice-error" role="alert"><ul class="plain"><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul></div><% } %>
+    <form method="post" action="/contacts">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="kind" value="message">
+      <input type="hidden" name="source" value="contacts">
+      <div class="field"><label for="ms-name">Имя *</label>
+        <input id="ms-name" name="name" type="text" autocomplete="name" required maxlength="100" value="<%= failed === 'message' ? (form.name || '') : '' %>"></div>
+      <div class="field"><label for="ms-phone">Телефон *</label>
+        <input id="ms-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="+380 50 123-45-67" value="<%= failed === 'message' ? (form.phone || '') : '' %>"></div>
+      <div class="field"><label for="ms-email">Электронная почта</label>
+        <input id="ms-email" name="email" type="email" autocomplete="email" maxlength="120" value="<%= failed === 'message' ? (form.email || '') : '' %>"></div>
+      <div class="field"><label for="ms-text">Сообщение *</label>
+        <textarea id="ms-text" name="message" rows="4" required maxlength="1500"><%= failed === 'message' ? (form.message || '') : '' %></textarea></div>
+      <div class="hp" aria-hidden="true"><label for="ms-website">Не заполняйте это поле</label><input id="ms-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+      <label class="check consent"><input type="checkbox" name="consent" required>
+        <span>Согласен(на) на обработку персональных данных согласно <a href="/privacy">политике конфиденциальности</a></span></label>
+      <button class="btn btn-primary" type="submit">Отправить</button>
+    </form>
+  </section>
 </div>
 <%- include('partials/footer') %>

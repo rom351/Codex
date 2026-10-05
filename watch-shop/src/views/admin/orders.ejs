@@ -21,7 +21,7 @@
       <td><a href="/admin/orders/<%= o.id %>"><strong><%= o.public_id %></strong></a></td>
       <td><%= dateTime(o.created_at) %></td>
       <td><%= o.customer_name %></td>
-      <td><a href="tel:<%= o.phone.replace(/[^\d+]/g, '') %>"><%= o.phone %></a></td>
+      <td><a href="tel:<%= (toTel(o.phone) || o.phone) %>"><%= o.phone %></a></td>
       <td><%= fmt.DELIVERY[o.delivery_method] %></td>
       <td class="num"><%= money(o.total) %></td>
       <td><span class="status status-<%= o.status %>"><%= fmt.ORDER_STATUSES[o.status] %></span></td>

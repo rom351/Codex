@@ -37,6 +37,7 @@
         <input type="radio" name="delivery_method" value="<%= key %>" data-cost="<%= costs[key] %>" <%= form.delivery_method === key ? 'checked' : '' %>>
         <span class="option-title"><%= DELIVERY[key] %></span>
         <span class="option-note"><%= costs[key] === 0 ? 'бесплатно' : money(costs[key]) %></span>
+        <span class="option-hint"><%= fmt.DELIVERY_HINT[key] %></span>
       </label>
       <% }) %>
       <div class="field" id="address-field">

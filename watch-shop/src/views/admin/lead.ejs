@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<%- include('_nav') %>
+<nav class="crumbs"><a href="/admin/leads">Заявки</a> / <span>№ <%= lead.id %></span></nav>
+<h1 class="page-title"><%= fmt.LEAD_KINDS[lead.kind] %> — <%= lead.name %></h1>
+
+<% if (saved) { %><div class="notice notice-ok" role="status">Сохранено.</div><% } %>
+
+<div class="cart-layout">
+  <div>
+    <div class="panel">
+      <h2>Клиент</h2>
+      <dl class="contacts">
+        <div><dt>Имя</dt><dd><%= lead.name %></dd></div>
+        <div><dt>Телефон</dt><dd><a href="tel:<%= (toTel(lead.phone) || lead.phone) %>"><%= lead.phone %></a></dd></div>
+        <% if (lead.email) { %><div><dt>Почта</dt><dd><a href="mailto:<%= lead.email %>"><%= lead.email %></a></dd></div><% } %>
+        <div><dt>Получена</dt><dd><%= dateTime(lead.created_at) %></dd></div>
+        <% if (lead.source) { %><div><dt>Со страницы</dt><dd><%= lead.source %></dd></div><% } %>
+      </dl>
+      <% if (lead.message) { %><h3>Сообщение</h3><p class="prose"><%= lead.message %></p><% } %>
+    </div>
+    <%- include('_related') %>
+  </div>
+
+  <aside class="summary">
+    <h2>Обработка</h2>
+    <p><span class="status status-lead-<%= lead.status %>"><%= fmt.LEAD_STATUSES[lead.status] %></span></p>
+    <form method="post" action="/admin/leads/<%= lead.id %>">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="field">
+        <label for="status">Статус</label>
+        <select id="status" name="status">
+          <% Object.entries(fmt.LEAD_STATUSES).forEach(([key, label]) => { %><option value="<%= key %>" <%= key === lead.status ? 'selected' : '' %>><%= label %></option><% }) %>
+        </select>
+      </div>
+      <div class="field">
+        <label for="note">Заметка менеджера</label>
+        <textarea id="note" name="note" rows="5" maxlength="2000"><%= lead.note %></textarea>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Сохранить</button>
+    </form>
+  </aside>
+</div>
+<%- include('_end') %>

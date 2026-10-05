@@ -139,7 +139,6 @@ module.exports = function shopRoutes({ config, products }) {
   const pages = {
     delivery: { title: 'Доставка и оплата', view: 'page-delivery' },
     about: { title: 'О магазине', view: 'page-about' },
-    contacts: { title: 'Контакты', view: 'page-contacts' },
     privacy: { title: 'Политика конфиденциальности', view: 'page-privacy' },
   };
   for (const [slug, page] of Object.entries(pages)) {

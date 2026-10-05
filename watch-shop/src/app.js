@@ -9,10 +9,13 @@ const { seedDemo } = require('./seed');
 const { createSecurity } = require('./lib/security');
 const { createProducts } = require('./lib/products');
 const { createOrders } = require('./lib/orders');
+const { createLeads } = require('./lib/leads');
+const { toTel } = require('./lib/phones');
 const { watchSvg } = require('./lib/placeholder');
 const format = require('./lib/format');
 const shopRoutes = require('./routes/shop');
 const cartRoutes = require('./routes/cart');
+const contactsRoutes = require('./routes/contacts');
 const adminRoutes = require('./routes/admin');
 
 function createApp(config) {
@@ -23,9 +26,10 @@ function createApp(config) {
   const security = createSecurity(config);
   const products = createProducts(db);
   const orders = createOrders(db, config);
+  const leads = createLeads(db);
   const money = format.createMoneyFormatter(config.currency);
   const dateTime = format.createDateFormatter(config.timezone);
-  const ctx = { config, db, products, orders, security, money };
+  const ctx = { config, db, products, orders, leads, security, money };
 
   const app = express();
   app.disable('x-powered-by');
@@ -55,11 +59,13 @@ function createApp(config) {
       money,
       dateTime,
       currency: config.currency,
+      freeDeliveryFrom: config.delivery.freeFrom,
       cartCount: orders.resolveCart(req.cart).count,
       path: req.path,
       isAdmin: Boolean(req.isAdmin),
       csrfToken: req.csrfToken || '',
       fmt: format,
+      toTel,
       productImage: (p) => (p.image ? `/uploads/${p.image}` : `/img/p/${p.slug}.svg`),
       meta: { title: config.shop.name, description: config.shop.slogan, canonical: null },
     });
@@ -74,6 +80,7 @@ function createApp(config) {
 
   app.use(shopRoutes(ctx));
   app.use(cartRoutes(ctx));
+  app.use(contactsRoutes(ctx));
   app.use('/admin', adminRoutes(ctx));
 
   app.use((req, res) => {

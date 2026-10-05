@@ -1,0 +1,10 @@
+<section class="cta-band" aria-labelledby="cta-h">
+  <div>
+    <h2 id="cta-h">Нужна помощь с выбором?</h2>
+    <p class="muted">Позвоните или закажите обратный звонок — подскажем модель и условия доставки.</p>
+  </div>
+  <div class="cta-actions">
+    <% if (shop.phones.length) { %><a class="btn btn-dark" href="tel:<%= shop.phones[0].tel %>" aria-label="Позвонить: <%= shop.phones[0].display %>"><%= shop.phones[0].display %></a><% } %>
+    <a class="btn btn-ghost" href="/contacts#callback">Заказать звонок</a>
+  </div>
+</section>

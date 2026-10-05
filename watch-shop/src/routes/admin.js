@@ -24,7 +24,7 @@ function text(value, max) {
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
 }
 
-module.exports = function adminRoutes({ config, products, orders, security }) {
+module.exports = function adminRoutes({ config, products, orders, leads, security }) {
   const router = express.Router();
   const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10 });
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_IMAGE_BYTES, files: 1 } });
@@ -60,6 +60,12 @@ module.exports = function adminRoutes({ config, products, orders, security }) {
 
   router.use(security.requireAdmin);
 
+  // Счётчик новых заявок в меню админки
+  router.use((req, res, next) => {
+    res.locals.newLeads = leads.counts().new;
+    next();
+  });
+
   // ----- Заказы -----
 
   router.get('/', (req, res) => {
@@ -74,7 +80,11 @@ module.exports = function adminRoutes({ config, products, orders, security }) {
   router.get('/orders/:id', (req, res, next) => {
     const order = orders.byId(Number.parseInt(req.params.id, 10));
     if (!order) return next();
-    res.render('admin/order', { order, error: req.query.error || null });
+    res.render('admin/order', {
+      order,
+      error: req.query.error || null,
+      related: leads.related(order.phone, { exceptOrderId: order.id }),
+    });
   });
 
   router.post('/orders/:id/status', (req, res, next) => {
@@ -88,6 +98,28 @@ module.exports = function adminRoutes({ config, products, orders, security }) {
       return res.redirect(`/admin/orders/${id}?error=${encodeURIComponent(err.message)}`);
     }
     res.redirect(`/admin/orders/${id}`);
+  });
+
+  // ----- Заявки (мини-CRM): сообщения и заказы звонка с сайта -----
+
+  router.get('/leads', (req, res) => {
+    const status = f.LEAD_STATUSES[req.query.status] ? req.query.status : null;
+    res.render('admin/leads', { list: leads.list(status), counts: leads.counts(), status });
+  });
+
+  router.get('/leads/:id', (req, res, next) => {
+    const lead = leads.byId(Number.parseInt(req.params.id, 10));
+    if (!lead) return next();
+    res.render('admin/lead', { lead, related: leads.related(lead.phone, { exceptLeadId: lead.id }), saved: req.query.saved === '1' });
+  });
+
+  router.post('/leads/:id', (req, res, next) => {
+    const id = Number.parseInt(req.params.id, 10);
+    const lead = leads.byId(id);
+    if (!lead) return next();
+    const status = f.LEAD_STATUSES[text(req.body.status, 20)] ? text(req.body.status, 20) : lead.status;
+    leads.update(id, { status, note: text(req.body.note, 2000) });
+    res.redirect(`/admin/leads/${id}?saved=1`);
   });
 
   // ----- Товары -----

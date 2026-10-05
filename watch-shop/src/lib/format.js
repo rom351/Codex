@@ -103,6 +103,13 @@ const ORDER_STATUSES = {
   cancelled: 'Отменён',
 };
 const DELIVERY = { pickup: 'Самовывоз', courier: 'Курьером', post: 'Почтой' };
+const DELIVERY_HINT = {
+  pickup: 'Заберёте заказ сами, адрес уточним при подтверждении',
+  courier: 'Привезём по адресу в удобное время',
+  post: 'Новая почта (отделение, почтомат) или Укрпочта',
+};
+const LEAD_STATUSES = { new: 'Новая', in_progress: 'В работе', done: 'Обработана', spam: 'Спам' };
+const LEAD_KINDS = { message: 'Сообщение', callback: 'Звонок' };
 const PAYMENT = { cod: 'Оплата при получении', transfer: 'Перевод по реквизитам' };
 
 module.exports = {
@@ -118,5 +125,8 @@ module.exports = {
   MOVEMENT_ONE,
   ORDER_STATUSES,
   DELIVERY,
+  DELIVERY_HINT,
+  LEAD_STATUSES,
+  LEAD_KINDS,
   PAYMENT,
 };

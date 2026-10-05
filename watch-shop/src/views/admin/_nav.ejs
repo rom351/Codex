@@ -3,6 +3,7 @@
     <a class="logo" href="/admin">Админ: <%= shop.name %></a>
     <nav class="admin-nav" aria-label="Админ-меню">
       <a href="/admin" <%- path === '/admin' || path.startsWith('/admin/orders') ? 'aria-current="page"' : '' %>>Заказы</a>
+      <a href="/admin/leads" <%- path.startsWith('/admin/leads') ? 'aria-current="page"' : '' %>>Заявки<% if (newLeads > 0) { %> <span class="nav-badge"><%= newLeads %></span><% } %></a>
       <a href="/admin/products" <%- path.startsWith('/admin/products') ? 'aria-current="page"' : '' %>>Товары</a>
       <a href="/" target="_blank" rel="noopener">Открыть магазин ↗</a>
     </nav>

@@ -1,0 +1,14 @@
+<% if (related.orders.length || related.leads.length) { %>
+<div class="panel">
+  <h2>Другие обращения этого клиента</h2>
+  <p class="muted small">Найдены по номеру телефона.</p>
+  <ul class="plain related">
+    <% related.orders.forEach((o) => { %>
+    <li><a href="/admin/orders/<%= o.id %>">Заказ <%= o.public_id %></a> · <%= dateTime(o.created_at) %> · <%= money(o.total) %> · <span class="status status-<%= o.status %>"><%= fmt.ORDER_STATUSES[o.status] %></span></li>
+    <% }) %>
+    <% related.leads.forEach((l) => { %>
+    <li><a href="/admin/leads/<%= l.id %>"><%= fmt.LEAD_KINDS[l.kind] %></a> · <%= dateTime(l.created_at) %> · <span class="status status-lead-<%= l.status %>"><%= fmt.LEAD_STATUSES[l.status] %></span></li>
+    <% }) %>
+  </ul>
+</div>
+<% } %>

@@ -11,7 +11,7 @@
       <h2>Покупатель</h2>
       <dl class="contacts">
         <div><dt>Имя</dt><dd><%= order.customer_name %></dd></div>
-        <div><dt>Телефон</dt><dd><a href="tel:<%= order.phone.replace(/[^\d+]/g, '') %>"><%= order.phone %></a></dd></div>
+        <div><dt>Телефон</dt><dd><a href="tel:<%= (toTel(order.phone) || order.phone) %>"><%= order.phone %></a></dd></div>
         <% if (order.email) { %><div><dt>Почта</dt><dd><a href="mailto:<%= order.email %>"><%= order.email %></a></dd></div><% } %>
         <div><dt>Получение</dt><dd><%= fmt.DELIVERY[order.delivery_method] %><%= order.address ? ` — ${order.address}` : '' %></dd></div>
         <div><dt>Оплата</dt><dd><%= fmt.PAYMENT[order.payment_method] %></dd></div>
@@ -31,6 +31,7 @@
         <div class="summary-total"><dt>Итого</dt><dd><%= money(order.total) %></dd></div>
       </dl>
     </div>
+    <%- include('_related') %>
   </div>
 
   <aside class="summary">

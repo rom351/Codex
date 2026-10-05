@@ -17,10 +17,11 @@
     <div>
       <p class="footer-title">Контакты</p>
       <ul class="plain">
-        <% if (shop.phone) { %><li><a href="tel:<%= shop.phone.replace(/[^\d+]/g, '') %>"><%= shop.phone %></a></li><% } %>
+        <% shop.phones.forEach((ph) => { %><li><a href="tel:<%= ph.tel %>"><%= ph.display %></a></li><% }) %>
         <% if (shop.email) { %><li><a href="mailto:<%= shop.email %>"><%= shop.email %></a></li><% } %>
         <% if (shop.address) { %><li><%= shop.address %></li><% } %>
         <li class="muted"><%= shop.hours %></li>
+        <li><a href="/contacts#callback">Заказать звонок</a></li>
       </ul>
     </div>
   </div>

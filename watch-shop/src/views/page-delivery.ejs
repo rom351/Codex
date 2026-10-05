@@ -2,26 +2,82 @@
 <%- include('partials/header') %>
 <nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a> / <span>Доставка и оплата</span></nav>
 <h1 class="page-title">Доставка и оплата</h1>
-<div class="prose-page">
-  <h2>Способы получения</h2>
-  <ul>
-    <li><strong>Курьером</strong> — <%= money(courierFee) %>.</li>
-    <li><strong>Почтой</strong> — <%= money(postFee) %>.</li>
-    <li><strong>Самовывоз</strong> — бесплатно<% if (shop.address) { %>, адрес: <%= shop.address %><% } %>.</li>
-  </ul>
-  <% if (freeFrom > 0) { %><p>При заказе от <strong><%= money(freeFrom) %></strong> доставка бесплатная.</p><% } %>
+<p class="lead">Отправляем заказы по Украине. Оплатить можно при получении или переводом по реквизитам.</p>
 
-  <h2>Способы оплаты</h2>
-  <ul>
-    <li><strong>При получении</strong> — оплачиваете заказ, когда получаете часы.</li>
-    <li><strong>Переводом по реквизитам</strong> — реквизиты отправляем после подтверждения заказа.</li>
-  </ul>
+<section class="block" aria-labelledby="delivery-h">
+  <h2 id="delivery-h">Способы доставки</h2>
+  <div class="info-cards">
+    <article class="info-card">
+      <h3>Почтой</h3>
+      <p class="info-price"><%= money(postFee) %></p>
+      <p class="muted">Новая почта (отделение или почтомат) или Укрпочта. Срок зависит от службы доставки и вашего города, менеджер назовёт его при подтверждении заказа.</p>
+    </article>
+    <article class="info-card">
+      <h3>Курьером</h3>
+      <p class="info-price"><%= money(courierFee) %></p>
+      <p class="muted">Привезём заказ по вашему адресу. Возможность и сроки для вашего города уточнит менеджер.</p>
+    </article>
+    <article class="info-card">
+      <h3>Самовывоз</h3>
+      <p class="info-price">Бесплатно</p>
+      <p class="muted"><% if (shop.address) { %>Адрес: <%= shop.address %>. <% } %>Время получения менеджер согласует при подтверждении заказа.</p>
+    </article>
+  </div>
+  <% if (freeFrom > 0) { %>
+  <p class="notice notice-ok">Доставка бесплатная при заказе от <strong><%= money(freeFrom) %></strong>.</p>
+  <% } %>
+</section>
 
-  <h2>Как оформить заказ</h2>
-  <ol>
-    <li>Добавьте часы в корзину.</li>
-    <li>Заполните контакты и выберите способ получения и оплаты.</li>
-    <li>Мы свяжемся с вами, подтвердим заказ и согласуем доставку.</li>
+<section class="block" aria-labelledby="payment-h">
+  <h2 id="payment-h">Способы оплаты</h2>
+  <div class="info-cards info-cards-2">
+    <article class="info-card">
+      <h3>При получении</h3>
+      <p class="muted">Оплачиваете заказ, когда получаете часы. Предоплата не нужна. Комиссию службы доставки за наложенный платёж менеджер уточнит при подтверждении заказа.</p>
+    </article>
+    <article class="info-card">
+      <h3>Переводом по реквизитам</h3>
+      <p class="muted">После подтверждения заказа пришлём реквизиты. Отправляем заказ после поступления оплаты.</p>
+    </article>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="steps-h">
+  <h2 id="steps-h">Как получить заказ</h2>
+  <ol class="steps">
+    <li><strong>Оформите заказ</strong><span>Выберите часы, добавьте в корзину и заполните контакты.</span></li>
+    <li><strong>Подтвердим</strong><span>Менеджер свяжется с вами и уточнит детали доставки и оплаты.</span></li>
+    <li><strong>Отправим</strong><span>Упакуем часы и передадим в службу доставки.</span></li>
+    <li><strong>Получите</strong><span>Заберёте заказ и оплатите его, если выбрана оплата при получении.</span></li>
   </ol>
-</div>
+</section>
+
+<section class="block" aria-labelledby="return-h">
+  <h2 id="return-h">Обмен и возврат</h2>
+  <p class="prose">Обмен и возврат осуществляются в соответствии с законодательством Украины. Если часы не подошли или с заказом что-то не так, свяжитесь с нами — менеджер подскажет, как действовать.</p>
+</section>
+
+<section class="block" aria-labelledby="faq-h">
+  <h2 id="faq-h">Частые вопросы</h2>
+  <div class="faq">
+    <details>
+      <summary>Сколько стоит доставка?</summary>
+      <p>Почтой — <%= money(postFee) %>, курьером — <%= money(courierFee) %>, самовывоз бесплатный.<% if (freeFrom > 0) { %> При заказе от <%= money(freeFrom) %> доставка бесплатная.<% } %></p>
+    </details>
+    <details>
+      <summary>Когда вы отправите заказ?</summary>
+      <p>После того как менеджер подтвердит заказ. Сроки отправки он назовёт в разговоре.</p>
+    </details>
+    <details>
+      <summary>Как оплатить переводом?</summary>
+      <p>Выберите «Перевод по реквизитам» при оформлении заказа. После подтверждения мы пришлём реквизиты.</p>
+    </details>
+    <details>
+      <summary>Что делать, если заказ пришёл не такой?</summary>
+      <p>Не затягивайте и свяжитесь с нами по телефону или через форму на странице «Контакты». Мы разберёмся.</p>
+    </details>
+  </div>
+</section>
+
+<%- include('partials/cta') %>
 <%- include('partials/footer') %>

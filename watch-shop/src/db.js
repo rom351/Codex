@@ -42,6 +42,20 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status, created_at);
 
+CREATE TABLE IF NOT EXISTS leads (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind       TEXT    NOT NULL CHECK (kind IN ('message','callback')),
+  name       TEXT    NOT NULL,
+  phone      TEXT    NOT NULL,
+  email      TEXT    NOT NULL DEFAULT '',
+  message    TEXT    NOT NULL DEFAULT '',
+  source     TEXT    NOT NULL DEFAULT '',                -- страница, с которой отправили форму
+  status     TEXT    NOT NULL DEFAULT 'new' CHECK (status IN ('new','in_progress','done','spam')),
+  note       TEXT    NOT NULL DEFAULT '',                -- заметка менеджера
+  created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_leads_status ON leads (status, created_at);
+
 CREATE TABLE IF NOT EXISTS order_items (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
   order_id   INTEGER NOT NULL REFERENCES orders (id) ON DELETE CASCADE,

@@ -511,6 +511,149 @@ test('время заказа в админке показывается по К
   assert.match(await admin.text('/admin'), /01\.12\.2026, 12:00/);
 });
 
+// ---------- Телефоны, контакты, заявки ----------
+
+const LEAD = { kind: 'message', name: 'Мария', phone: '050 123 45 67', email: 'maria@example.com', message: 'Подскажите, есть ли Classic 40 в чёрном цвете?', consent: 'on' };
+
+test('шапка и подвал: телефоны — кликабельные ссылки tel:, есть «Заказать звонок»', async (t) => {
+  const shop = startShop({ SHOP_PHONE: '+380 50 111 22 33, 067 444 55 66' });
+  t.after(() => shop.close());
+  const html = await client(shop.base).text('/catalog');
+
+  const header = html.slice(html.indexOf('<header'), html.indexOf('</header>'));
+  assert.match(header, /href="tel:\+380501112233"[^>]*>\+380 50 111 22 33</);
+  assert.match(header, /href="tel:\+380674445566"[^>]*>067 444 55 66</, 'местный номер приводится к международному');
+  assert.match(header, /href="\/contacts#callback"[^>]*>Заказать звонок</);
+  const footer = html.slice(html.indexOf('<footer'));
+  assert.match(footer, /href="tel:\+380501112233"/);
+});
+
+test('телефоны: разбор настроек, в боевом режиме по умолчанию пусто', () => {
+  const { parsePhones, toTel, phoneKey } = require('../src/lib/phones');
+  assert.equal(toTel('050 123-45-67'), '+380501234567');
+  assert.equal(toTel('+38 (050) 123-45-67'), '+380501234567');
+  assert.equal(toTel('12345'), null);
+  assert.deepEqual(parsePhones('+380 50 111 22 33; abc, 067 444 55 66').map((p) => p.tel), ['+380501112233', '+380674445566']);
+  assert.equal(phoneKey('+380 (50) 123-45-67'), phoneKey('050 123 45 67'));
+  const prod = load({ NODE_ENV: 'production', SESSION_SECRET: 'x'.repeat(32), ADMIN_PASSWORD: 'long-enough-pass' });
+  assert.deepEqual(prod.shop.phones, []);
+  assert.equal(prod.shop.email, '');
+});
+
+test('контакты: форма сообщения и заказ звонка сохраняются как заявки', async (t) => {
+  const shop = startShop();
+  t.after(() => shop.close());
+  const c = client(shop.base);
+  const leads = () => shop.db.prepare('SELECT * FROM leads ORDER BY id').all();
+
+  assert.match(await c.text('/contacts'), /Заказать звонок/);
+
+  // сообщение
+  const sent = await c.post('/contacts', LEAD);
+  assert.equal(sent.status, 302);
+  assert.equal(sent.headers.get('location'), '/contacts?sent=message#message');
+  assert.match(await c.text('/contacts?sent=message'), /Сообщение отправлено/);
+  assert.equal(leads().length, 1);
+  assert.equal(leads()[0].status, 'new');
+  assert.equal(leads()[0].phone, '050 123 45 67');
+
+  // звонок: достаточно имени и телефона
+  const cb = await c.post('/contacts', { kind: 'callback', name: 'Олег', phone: '+380 67 000 11 22', consent: 'on' });
+  assert.equal(cb.headers.get('location'), '/contacts?sent=callback#callback');
+  assert.equal(leads().length, 2);
+  assert.equal(leads()[1].kind, 'callback');
+
+  // ошибки: ничего не сохраняется, введённое не теряется
+  const bad = await c.post('/contacts', { ...LEAD, name: '', phone: 'abc', message: 'ок', consent: '' });
+  assert.equal(bad.status, 422);
+  const html = await bad.text();
+  assert.match(html, /Укажите имя/);
+  assert.match(html, /Укажите телефон/);
+  assert.match(html, /Напишите ваш вопрос/);
+  assert.match(html, /согласие/);
+  assert.equal(leads().length, 2);
+
+  // бот заполнил скрытое поле; запрос без CSRF
+  assert.equal((await c.post('/contacts', { ...LEAD, website: 'spam.example' })).status, 422);
+  assert.equal((await c.post('/contacts', LEAD, { csrf: false })).status, 403);
+  assert.equal(leads().length, 2);
+});
+
+test('контакты: ограничение частоты отправки форм', async (t) => {
+  const shop = startShop();
+  t.after(() => shop.close());
+  const c = client(shop.base);
+  let last;
+  for (let i = 0; i < 9; i++) last = await c.post('/contacts', LEAD);
+  assert.equal(last.status, 429);
+  assert.ok(shop.db.prepare('SELECT COUNT(*) AS n FROM leads').get().n <= 8);
+});
+
+test('админка: заявки — список, статус, заметка, связь с заказами по телефону', async (t) => {
+  const shop = startShop();
+  t.after(() => shop.close());
+
+  // клиент оставил заявку и отдельно сделал заказ с тем же номером (в другой записи)
+  const buyer = client(shop.base);
+  await buyer.post('/contacts', { ...LEAD, message: '<b>Привет</b> вопрос по часам' });
+  await buyer.post('/cart/add', { product_id: idOf(shop.db, 'meridian-lady-mini'), qty: '1' });
+  await buyer.post('/checkout', { ...VALID_ORDER, phone: '+380 50 123 45 67' });
+  const lead = shop.db.prepare('SELECT * FROM leads').get();
+  const order = shop.db.prepare('SELECT * FROM orders').get();
+
+  // без входа закрыто
+  const anon = client(shop.base);
+  assert.equal((await anon.get('/admin/leads')).status, 302);
+  assert.equal((await anon.post(`/admin/leads/${lead.id}`, { status: 'done' })).status, 302);
+  assert.equal(shop.db.prepare('SELECT status FROM leads').get().status, 'new');
+
+  const admin = await adminLogin(shop);
+  const listHtml = await admin.text('/admin/leads');
+  assert.match(listHtml, /Мария/);
+  assert.match(listHtml, /href="tel:\+380501234567"/);
+  assert.match(await admin.text('/admin'), /<span class="nav-badge">1<\/span>/, 'счётчик новых заявок в меню');
+
+  const detail = await admin.text(`/admin/leads/${lead.id}`);
+  assert.match(detail, /&lt;b&gt;Привет&lt;\/b&gt;/, 'HTML в сообщении экранируется');
+  assert.match(detail, new RegExp(order.public_id), 'заказ клиента виден в карточке заявки');
+
+  // в карточке заказа видна заявка клиента
+  assert.match(await admin.text(`/admin/orders/${order.id}`), new RegExp(`/admin/leads/${lead.id}`));
+
+  // смена статуса и заметка
+  await admin.post(`/admin/leads/${lead.id}`, { status: 'in_progress', note: 'Перезвонить завтра' });
+  let row = shop.db.prepare('SELECT * FROM leads').get();
+  assert.equal(row.status, 'in_progress');
+  assert.equal(row.note, 'Перезвонить завтра');
+  assert.match(await admin.text('/admin/leads?status=in_progress'), /Мария/);
+  assert.doesNotMatch(await admin.text('/admin'), /nav-badge/, 'новых заявок не осталось');
+
+  // неизвестный статус игнорируется
+  await admin.post(`/admin/leads/${lead.id}`, { status: 'hacked', note: '' });
+  assert.equal(shop.db.prepare('SELECT status FROM leads').get().status, 'in_progress');
+  assert.equal((await admin.get('/admin/leads/9999')).status, 404);
+});
+
+test('доставка и оплата: структура страницы и цифры берутся из настроек', async (t) => {
+  const shop = startShop({ DELIVERY_COURIER_FEE: '200', DELIVERY_POST_FEE: '80', FREE_DELIVERY_FROM: '4000' });
+  t.after(() => shop.close());
+  const html = await client(shop.base).text('/delivery');
+
+  for (const part of ['Способы доставки', 'Способы оплаты', 'Как получить заказ', 'Обмен и возврат', 'Частые вопросы', 'Новая почта', 'При получении', 'Переводом по реквизитам']) {
+    assert.ok(html.includes(part), `нет блока «${part}»`);
+  }
+  assert.match(html, /80\s₴/);
+  assert.match(html, /200\s₴/);
+  assert.match(html, /от\s<strong>4\s000\s₴/);
+  assert.match(html, /<details>/);
+  assert.match(html, /href="\/contacts#callback"/, 'призыв заказать звонок');
+
+  // без бесплатной доставки блок не показывается
+  const off = startShop({ FREE_DELIVERY_FROM: '0' });
+  t.after(() => off.close());
+  assert.doesNotMatch(await client(off.base).text('/delivery'), /Доставка бесплатная при заказе/);
+});
+
 test('конфиг: по умолчанию гривна и часовой пояс Киева; неверный пояс отклоняется', () => {
   const cfg = load({ CURRENCY: '', TIMEZONE: '' });
   assert.equal(cfg.currency, 'UAH');

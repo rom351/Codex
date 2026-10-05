@@ -2,6 +2,7 @@
 
 const path = require('node:path');
 const crypto = require('node:crypto');
+const { parsePhones } = require('./lib/phones');
 const fs = require('node:fs');
 
 // Простая загрузка .env без внешних зависимостей
@@ -40,6 +41,10 @@ function load(overrides = {}) {
     throw new Error('В боевом режиме задайте ADMIN_PASSWORD длиной не менее 10 символов.');
   }
 
+  // Телефоны через запятую. Вне боевого режима подставляются демо-номера, чтобы шапка не была пустой.
+  const demoContacts = !isProd;
+  const phones = parsePhones(str('SHOP_PHONE', demoContacts ? '+380 50 000 00 00, +380 67 000 00 00' : ''));
+
   // Время заказов хранится в UTC, а показывается по этому поясу
   const timezone = str('TIMEZONE', 'Europe/Kyiv');
   try {
@@ -68,9 +73,10 @@ function load(overrides = {}) {
     shop: {
       name: str('SHOP_NAME', 'Часовая лавка'),
       slogan: str('SHOP_SLOGAN', 'Часы, которые хочется носить'),
-      phone: str('SHOP_PHONE'),
-      email: str('SHOP_EMAIL'),
-      address: str('SHOP_ADDRESS'),
+      phones,
+      phone: phones.length ? phones[0].display : '',
+      email: str('SHOP_EMAIL', demoContacts ? 'info@example.com' : ''),
+      address: str('SHOP_ADDRESS', demoContacts ? 'г. Киев, ул. Примерная, 1 (демо-адрес)' : ''),
       hours: str('SHOP_HOURS', 'Пн–Сб, 10:00–19:00'),
     },
     currency: str('CURRENCY', 'UAH'),
