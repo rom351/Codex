@@ -18,16 +18,27 @@ function slugify(text) {
 }
 
 function createMoneyFormatter(currency) {
+  // narrowSymbol: одинаковый знак (₴, ₽, $) в любой версии ICU, в том числе в браузере
   const whole = new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency,
+    currencyDisplay: 'narrowSymbol',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   });
-  const cents = new Intl.NumberFormat('ru-RU', { style: 'currency', currency });
+  const cents = new Intl.NumberFormat('ru-RU', { style: 'currency', currency, currencyDisplay: 'narrowSymbol' });
   return (minor) => {
     const value = (Number(minor) || 0) / 100;
     return Number.isInteger(value) ? whole.format(value) : cents.format(value);
+  };
+}
+
+// Дата из SQLite ("2026-10-05 14:47:09", UTC) -> "05.10.2026, 17:47" в нужном часовом поясе
+function createDateFormatter(timeZone) {
+  const fmt = new Intl.DateTimeFormat('ru-RU', { timeZone, dateStyle: 'short', timeStyle: 'short' });
+  return (sqliteUtc) => {
+    const date = new Date(`${String(sqliteUtc).replace(' ', 'T')}Z`);
+    return Number.isNaN(date.getTime()) ? String(sqliteUtc) : fmt.format(date);
   };
 }
 
@@ -97,6 +108,7 @@ const PAYMENT = { cod: 'Оплата при получении', transfer: 'Пе
 module.exports = {
   slugify,
   createMoneyFormatter,
+  createDateFormatter,
   parseMoney,
   moneyToInput,
   parseSpecs,

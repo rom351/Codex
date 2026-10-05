@@ -19,7 +19,7 @@
     <% list.forEach((o) => { %>
     <tr>
       <td><a href="/admin/orders/<%= o.id %>"><strong><%= o.public_id %></strong></a></td>
-      <td><%= o.created_at %></td>
+      <td><%= dateTime(o.created_at) %></td>
       <td><%= o.customer_name %></td>
       <td><a href="tel:<%= o.phone.replace(/[^\d+]/g, '') %>"><%= o.phone %></a></td>
       <td><%= fmt.DELIVERY[o.delivery_method] %></td>

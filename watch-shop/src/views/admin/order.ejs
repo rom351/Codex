@@ -16,7 +16,7 @@
         <div><dt>Получение</dt><dd><%= fmt.DELIVERY[order.delivery_method] %><%= order.address ? ` — ${order.address}` : '' %></dd></div>
         <div><dt>Оплата</dt><dd><%= fmt.PAYMENT[order.payment_method] %></dd></div>
         <% if (order.comment) { %><div><dt>Комментарий</dt><dd><%= order.comment %></dd></div><% } %>
-        <div><dt>Создан</dt><dd><%= order.created_at %> (UTC)</dd></div>
+        <div><dt>Создан</dt><dd><%= dateTime(order.created_at) %></dd></div>
       </dl>
     </div>
 

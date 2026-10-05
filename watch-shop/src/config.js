@@ -40,6 +40,14 @@ function load(overrides = {}) {
     throw new Error('В боевом режиме задайте ADMIN_PASSWORD длиной не менее 10 символов.');
   }
 
+  // Время заказов хранится в UTC, а показывается по этому поясу
+  const timezone = str('TIMEZONE', 'Europe/Kyiv');
+  try {
+    new Intl.DateTimeFormat('ru-RU', { timeZone: timezone });
+  } catch {
+    throw new Error(`Неизвестный часовой пояс в TIMEZONE: «${timezone}». Пример: Europe/Kyiv.`);
+  }
+
   const siteUrl = str('SITE_URL', 'http://localhost:3000').replace(/\/+$/, '');
   const dataDir = path.resolve(str('DATA_DIR', path.join(__dirname, '..', 'data')));
 
@@ -65,12 +73,13 @@ function load(overrides = {}) {
       address: str('SHOP_ADDRESS'),
       hours: str('SHOP_HOURS', 'Пн–Сб, 10:00–19:00'),
     },
-    currency: str('CURRENCY', 'RUB'),
+    currency: str('CURRENCY', 'UAH'),
+    timezone,
     // Суммы хранятся в минорных единицах («копейках»), поэтому умножаем на 100
     delivery: {
-      courierFee: int('DELIVERY_COURIER_FEE', 500) * 100,
-      postFee: int('DELIVERY_POST_FEE', 350) * 100,
-      freeFrom: int('FREE_DELIVERY_FROM', 30000) * 100,
+      courierFee: int('DELIVERY_COURIER_FEE', 150) * 100,
+      postFee: int('DELIVERY_POST_FEE', 100) * 100,
+      freeFrom: int('FREE_DELIVERY_FROM', 5000) * 100,
     },
   };
 }

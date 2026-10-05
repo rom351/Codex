@@ -20,6 +20,10 @@ function startShop(extra = {}) {
     ADMIN_PASSWORD: 'test-password-123',
     SESSION_SECRET: 'x'.repeat(40),
     NODE_ENV: 'test',
+    CURRENCY: 'UAH',
+    DELIVERY_COURIER_FEE: '500',
+    DELIVERY_POST_FEE: '350',
+    FREE_DELIVERY_FROM: '30000',
     ...extra,
   });
   const app = createApp(config);
@@ -77,10 +81,10 @@ function client(base) {
 
 const VALID_ORDER = {
   customer_name: 'Иван Петров',
-  phone: '+7 900 123-45-67',
+  phone: '+380 50 123-45-67',
   email: 'ivan@example.com',
   delivery_method: 'courier',
-  address: 'Москва, ул. Тверская, д. 1, кв. 2',
+  address: 'Киев, ул. Хрещатик, 1, кв. 2',
   payment_method: 'cod',
   consent: 'on',
 };
@@ -471,6 +475,48 @@ test('экранирование: HTML в названии не превраща
 });
 
 // ---------- Конфигурация ----------
+
+test('гривна: цены на витрине и в корзине показываются в ₴', async (t) => {
+  const shop = startShop();
+  t.after(() => shop.close());
+  const c = client(shop.base);
+
+  assert.match(await c.text('/watch/nordhaus-classic-40'), /48\s900\s₴/);
+  assert.doesNotMatch(await c.text('/catalog'), /₽/);
+
+  await c.post('/cart/add', { product_id: idOf(shop.db, 'meridian-lady-mini'), qty: '1' });
+  const checkout = await c.text('/checkout');
+  assert.match(checkout, /8\s700\s₴/);
+  assert.match(checkout, /500\s₴/, 'курьер');
+  assert.match(checkout, /placeholder="\+380 50 123-45-67"/);
+  assert.match(checkout, /data-currency="UAH"/);
+});
+
+test('время заказа в админке показывается по Киеву, а не по UTC', async (t) => {
+  const shop = startShop();
+  t.after(() => shop.close());
+  const buyer = client(shop.base);
+  await buyer.post('/cart/add', { product_id: idOf(shop.db, 'meridian-lady-mini'), qty: '1' });
+  await buyer.post('/checkout', VALID_ORDER);
+  // летнее время Киева: UTC+3, зимнее: UTC+2
+  shop.db.prepare("UPDATE orders SET created_at = '2026-07-01 10:00:00'").run();
+
+  const admin = await adminLogin(shop);
+  assert.match(await admin.text('/admin'), /01\.07\.2026, 13:00/);
+  const id = shop.db.prepare('SELECT id FROM orders').get().id;
+  const page = await admin.text(`/admin/orders/${id}`);
+  assert.match(page, /01\.07\.2026, 13:00/);
+
+  shop.db.prepare("UPDATE orders SET created_at = '2026-12-01 10:00:00'").run();
+  assert.match(await admin.text('/admin'), /01\.12\.2026, 12:00/);
+});
+
+test('конфиг: по умолчанию гривна и часовой пояс Киева; неверный пояс отклоняется', () => {
+  const cfg = load({ CURRENCY: '', TIMEZONE: '' });
+  assert.equal(cfg.currency, 'UAH');
+  assert.equal(cfg.timezone, 'Europe/Kyiv');
+  assert.throws(() => load({ TIMEZONE: 'Mars/Olympus' }), /TIMEZONE/);
+});
 
 test('конфиг: в боевом режиме без секретов сервер не стартует', () => {
   assert.throws(() => load({ NODE_ENV: 'production', SESSION_SECRET: '', ADMIN_PASSWORD: 'long-enough-pass' }), /SESSION_SECRET/);

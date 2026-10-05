@@ -24,6 +24,7 @@ function createApp(config) {
   const products = createProducts(db);
   const orders = createOrders(db, config);
   const money = format.createMoneyFormatter(config.currency);
+  const dateTime = format.createDateFormatter(config.timezone);
   const ctx = { config, db, products, orders, security, money };
 
   const app = express();
@@ -52,6 +53,7 @@ function createApp(config) {
       shop: config.shop,
       siteUrl: config.siteUrl,
       money,
+      dateTime,
       currency: config.currency,
       cartCount: orders.resolveCart(req.cart).count,
       path: req.path,

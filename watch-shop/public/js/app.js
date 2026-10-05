@@ -16,8 +16,14 @@ document.querySelectorAll('form[data-confirm]').forEach((form) => {
 const checkout = document.getElementById('checkout-form');
 if (checkout) {
   const subtotal = Number(checkout.dataset.subtotal) || 0;
-  const currency = checkout.dataset.currency || 'RUB';
-  const fmt = new Intl.NumberFormat('ru-RU', { style: 'currency', currency, maximumFractionDigits: 0 });
+  const currency = checkout.dataset.currency || 'UAH';
+  // narrowSymbol — тот же знак валюты, что и в страницах, отрисованных сервером
+  const fmt = new Intl.NumberFormat('ru-RU', {
+    style: 'currency',
+    currency,
+    currencyDisplay: 'narrowSymbol',
+    maximumFractionDigits: 0,
+  });
   const deliveryEl = document.getElementById('sum-delivery');
   const totalEl = document.getElementById('sum-total');
   const addressField = document.getElementById('address-field');

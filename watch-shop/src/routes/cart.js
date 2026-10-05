@@ -30,7 +30,7 @@ function validateCheckout(body) {
   if (form.customer_name.length < 2) errors.push('Укажите имя.');
   const digits = form.phone.replace(/\D/g, '');
   if (!/^[\d\s()+\-]+$/.test(form.phone) || digits.length < 10 || digits.length > 15) {
-    errors.push('Укажите телефон в формате +7 900 123-45-67.');
+    errors.push('Укажите телефон в формате +380 50 123-45-67.');
   }
   if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email)) errors.push('Проверьте адрес электронной почты.');
   if (!DELIVERY[form.delivery_method]) errors.push('Выберите способ получения.');
