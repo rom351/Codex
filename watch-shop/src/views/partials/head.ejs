@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= meta.title %></title>
+  <% if (meta.description) { %><meta name="description" content="<%= meta.description %>"><% } %>
+  <% if (meta.robots) { %><meta name="robots" content="<%= meta.robots %>"><% } %>
+  <% if (meta.canonical) { %><link rel="canonical" href="<%= meta.canonical %>"><% } %>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="<%= shop.name %>">
+  <meta property="og:title" content="<%= meta.title %>">
+  <% if (meta.description) { %><meta property="og:description" content="<%= meta.description %>"><% } %>
+  <% if (meta.image) { %><meta property="og:image" content="<%= meta.image %>"><% } %>
+  <meta name="theme-color" content="#1b1b1d">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>

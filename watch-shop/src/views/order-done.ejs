@@ -1,0 +1,27 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<div class="done">
+  <p class="eyebrow">Спасибо за заказ!</p>
+  <h1 class="page-title">Заказ № <%= order.public_id %> оформлен</h1>
+  <p class="lead">Мы свяжемся с вами по телефону <strong><%= order.phone %></strong>, чтобы подтвердить заказ.
+    <% if (order.payment_method === 'transfer') { %>Реквизиты для оплаты пришлём после подтверждения.<% } %></p>
+
+  <div class="panel">
+    <ul class="plain summary-items">
+      <% order.items.forEach((it) => { %>
+      <li><span><%= it.name %> × <%= it.qty %></span><span><%= money(it.price * it.qty) %></span></li>
+      <% }) %>
+    </ul>
+    <dl class="summary-list">
+      <div><dt>Товары</dt><dd><%= money(order.subtotal) %></dd></div>
+      <div><dt>Доставка (<%= DELIVERY[order.delivery_method].toLowerCase() %>)</dt><dd><%= order.delivery_cost === 0 ? 'бесплатно' : money(order.delivery_cost) %></dd></div>
+      <div class="summary-total"><dt>Итого</dt><dd><%= money(order.total) %></dd></div>
+    </dl>
+    <p class="muted">Оплата: <%= PAYMENT[order.payment_method].toLowerCase() %><% if (order.address) { %> · Адрес: <%= order.address %><% } %></p>
+  </div>
+
+  <a class="btn btn-primary" href="/catalog">Вернуться в каталог</a>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,64 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a> / <span>Корзина</span></nav>
+<h1 class="page-title">Корзина</h1>
+
+<% if (cart.lines.length === 0) { %>
+  <div class="empty">
+    <p class="empty-title">В корзине пока пусто</p>
+    <p class="muted">Выберите часы в каталоге — они появятся здесь.</p>
+    <a class="btn btn-primary" href="/catalog">Перейти в каталог</a>
+  </div>
+<% } else { %>
+  <div class="cart-layout">
+    <ul class="cart-lines plain">
+      <% cart.lines.forEach(({ product, qty, sum, limited }) => { %>
+      <li class="cart-line">
+        <a class="cart-thumb" href="/watch/<%= product.slug %>"><img src="<%= productImage(product) %>" alt="" width="96" height="120" loading="lazy"></a>
+        <div class="cart-info">
+          <p class="card-brand"><%= product.brand %></p>
+          <a class="cart-name" href="/watch/<%= product.slug %>"><%= product.name %></a>
+          <p class="muted"><%= money(product.price) %> за шт.</p>
+          <% if (limited) { %><p class="stock stock-warn">Количество уменьшено до доступного остатка.</p><% } %>
+        </div>
+        <form class="cart-qty" method="post" action="/cart/set">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="product_id" value="<%= product.id %>">
+          <label class="sr-only" for="q-<%= product.id %>">Количество</label>
+          <select id="q-<%= product.id %>" name="qty" data-autosubmit>
+            <% for (let i = 1; i <= Math.min(product.stock, MAX_QTY); i++) { %><option value="<%= i %>" <%= i === qty ? 'selected' : '' %>><%= i %></option><% } %>
+          </select>
+          <noscript><button class="btn btn-ghost" type="submit">Обновить</button></noscript>
+        </form>
+        <p class="cart-sum"><%= money(sum) %></p>
+        <form class="cart-remove" method="post" action="/cart/set">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="product_id" value="<%= product.id %>">
+          <input type="hidden" name="qty" value="0">
+          <button class="link-btn" type="submit" aria-label="Удалить <%= product.name %> из корзины">Удалить</button>
+        </form>
+      </li>
+      <% }) %>
+    </ul>
+
+    <aside class="summary">
+      <h2>Ваш заказ</h2>
+      <dl class="summary-list">
+        <div><dt>Товары (<%= cart.count %>)</dt><dd><%= money(cart.subtotal) %></dd></div>
+        <div><dt>Доставка</dt><dd class="muted">считается при оформлении</dd></div>
+      </dl>
+      <% if (freeFrom > 0) { %>
+        <% if (cart.subtotal >= freeFrom) { %>
+          <p class="notice notice-ok">Доставка бесплатная.</p>
+        <% } else { %>
+          <p class="muted">Бесплатная доставка от <%= money(freeFrom) %>. Не хватает <%= money(freeFrom - cart.subtotal) %>.</p>
+        <% } %>
+      <% } %>
+      <a class="btn btn-primary btn-block" href="/checkout">Оформить заказ</a>
+      <a class="btn btn-ghost btn-block" href="/catalog">Продолжить покупки</a>
+    </aside>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

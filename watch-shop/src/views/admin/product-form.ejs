@@ -1,0 +1,70 @@
+<%- include('../partials/head') %>
+<%- include('_nav') %>
+<nav class="crumbs"><a href="/admin/products">Товары</a> / <span><%= product ? 'Изменить' : 'Новый товар' %></span></nav>
+<h1 class="page-title"><%= product ? `${product.brand} ${product.name}` : 'Новый товар' %></h1>
+
+<% if (errors.length) { %>
+<div class="notice notice-error" role="alert">
+  <ul class="plain"><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul>
+</div>
+<% } %>
+
+<form class="panel product-form" method="post" enctype="multipart/form-data" action="<%= product ? `/admin/products/${product.id}` : '/admin/products' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="form-grid">
+    <div class="field"><label for="brand">Бренд *</label><input id="brand" name="brand" required maxlength="60" value="<%= form.brand %>"></div>
+    <div class="field"><label for="name">Модель *</label><input id="name" name="name" required maxlength="120" value="<%= form.name %>"></div>
+
+    <div class="field">
+      <label for="gender">Для кого *</label>
+      <select id="gender" name="gender">
+        <% Object.entries(GENDERS).forEach(([k, v]) => { %><option value="<%= k %>" <%= form.gender === k ? 'selected' : '' %>><%= v %></option><% }) %>
+      </select>
+    </div>
+    <div class="field">
+      <label for="movement">Механизм *</label>
+      <select id="movement" name="movement">
+        <% Object.entries(MOVEMENTS).forEach(([k, v]) => { %><option value="<%= k %>" <%= form.movement === k ? 'selected' : '' %>><%= v %></option><% }) %>
+      </select>
+    </div>
+
+    <div class="field"><label for="price">Цена, <%= currency %> *</label><input id="price" name="price" inputmode="decimal" required value="<%= form.price %>"></div>
+    <div class="field"><label for="old_price">Старая цена (для скидки)</label><input id="old_price" name="old_price" inputmode="decimal" value="<%= form.old_price %>"></div>
+
+    <div class="field"><label for="stock">Остаток на складе, шт. *</label><input id="stock" name="stock" inputmode="numeric" required value="<%= form.stock %>"></div>
+  </div>
+
+  <div class="field">
+    <label for="description">Описание</label>
+    <textarea id="description" name="description" rows="5" maxlength="5000"><%= form.description %></textarea>
+  </div>
+
+  <div class="field">
+    <label for="specs">Характеристики — по одной в строке, в виде «Название: значение»</label>
+    <textarea id="specs" name="specs" rows="6" maxlength="3000" placeholder="Диаметр корпуса: 40 мм&#10;Водозащита: 50 м"><%= form.specs %></textarea>
+  </div>
+
+  <div class="field">
+    <label for="image">Фото (JPG, PNG или WebP, до 5 МБ; лучше вертикальное 4:5)</label>
+    <% if (form.image) { %>
+      <div class="current-image">
+        <img src="/uploads/<%= form.image %>" alt="Текущее фото" width="80" height="100">
+        <label class="check"><input type="checkbox" name="remove_image"> Удалить фото</label>
+      </div>
+    <% } %>
+    <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp">
+    <p class="muted small">Если фото не загружено, на сайте показывается картинка-заглушка.</p>
+  </div>
+
+  <div class="checks">
+    <label class="check"><input type="checkbox" name="is_active" <%= form.is_active ? 'checked' : '' %>> Показывать на сайте</label>
+    <label class="check"><input type="checkbox" name="is_featured" <%= form.is_featured ? 'checked' : '' %>> Показывать на главной</label>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Сохранить</button>
+    <a class="btn btn-ghost" href="/admin/products">Отмена</a>
+  </div>
+</form>
+<%- include('_end') %>

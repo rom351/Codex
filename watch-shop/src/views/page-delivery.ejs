@@ -1,0 +1,27 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a> / <span>Доставка и оплата</span></nav>
+<h1 class="page-title">Доставка и оплата</h1>
+<div class="prose-page">
+  <h2>Способы получения</h2>
+  <ul>
+    <li><strong>Курьером</strong> — <%= money(courierFee) %>.</li>
+    <li><strong>Почтой</strong> — <%= money(postFee) %>.</li>
+    <li><strong>Самовывоз</strong> — бесплатно<% if (shop.address) { %>, адрес: <%= shop.address %><% } %>.</li>
+  </ul>
+  <% if (freeFrom > 0) { %><p>При заказе от <strong><%= money(freeFrom) %></strong> доставка бесплатная.</p><% } %>
+
+  <h2>Способы оплаты</h2>
+  <ul>
+    <li><strong>При получении</strong> — оплачиваете заказ, когда получаете часы.</li>
+    <li><strong>Переводом по реквизитам</strong> — реквизиты отправляем после подтверждения заказа.</li>
+  </ul>
+
+  <h2>Как оформить заказ</h2>
+  <ol>
+    <li>Добавьте часы в корзину.</li>
+    <li>Заполните контакты и выберите способ получения и оплаты.</li>
+    <li>Мы свяжемся с вами, подтвердим заказ и согласуем доставку.</li>
+  </ol>
+</div>
+<%- include('partials/footer') %>

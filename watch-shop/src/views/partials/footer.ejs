@@ -1,0 +1,31 @@
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <p class="footer-title"><%= shop.name %></p>
+      <p class="muted"><%= shop.slogan %></p>
+    </div>
+    <div>
+      <p class="footer-title">Покупателям</p>
+      <ul class="plain">
+        <li><a href="/catalog">Каталог</a></li>
+        <li><a href="/delivery">Доставка и оплата</a></li>
+        <li><a href="/about">О магазине</a></li>
+        <li><a href="/privacy">Политика конфиденциальности</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-title">Контакты</p>
+      <ul class="plain">
+        <% if (shop.phone) { %><li><a href="tel:<%= shop.phone.replace(/[^\d+]/g, '') %>"><%= shop.phone %></a></li><% } %>
+        <% if (shop.email) { %><li><a href="mailto:<%= shop.email %>"><%= shop.email %></a></li><% } %>
+        <% if (shop.address) { %><li><%= shop.address %></li><% } %>
+        <li class="muted"><%= shop.hours %></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© <%= new Date().getFullYear() %> <%= shop.name %></span>
+  </div>
+</footer>
+<%- include('end') %>

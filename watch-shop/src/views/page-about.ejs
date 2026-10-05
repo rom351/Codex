@@ -1,0 +1,10 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a> / <span>О магазине</span></nav>
+<h1 class="page-title">О магазине</h1>
+<div class="prose-page">
+  <p><strong><%= shop.name %></strong> — интернет-магазин часов. <%= shop.slogan %>.</p>
+  <p>В каталоге представлены механические, кварцевые и умные часы для мужчин, женщин и на каждый день. Если не можете определиться с моделью, напишите или позвоните нам — поможем с выбором.</p>
+  <p><a class="btn btn-primary" href="/catalog">Перейти в каталог</a></p>
+</div>
+<%- include('partials/footer') %>

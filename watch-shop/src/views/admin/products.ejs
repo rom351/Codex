@@ -1,0 +1,36 @@
+<%- include('../partials/head') %>
+<%- include('_nav') %>
+<div class="section-head">
+  <h1 class="page-title">Товары</h1>
+  <a class="btn btn-primary" href="/admin/products/new">+ Добавить часы</a>
+</div>
+
+<% if (list.length === 0) { %>
+  <div class="empty"><p class="empty-title">Товаров пока нет</p><a class="btn btn-primary" href="/admin/products/new">Добавить первый товар</a></div>
+<% } else { %>
+<div class="table-wrap">
+<table class="table">
+  <thead><tr><th></th><th>Название</th><th>Тип</th><th class="num">Цена</th><th class="num">Остаток</th><th>Показ</th><th></th></tr></thead>
+  <tbody>
+    <% list.forEach((p) => { %>
+    <tr>
+      <td class="thumb-cell"><img src="<%= productImage(p) %>" alt="" width="40" height="50" loading="lazy"></td>
+      <td><a href="/admin/products/<%= p.id %>/edit"><strong><%= p.brand %> <%= p.name %></strong></a></td>
+      <td><%= fmt.GENDERS[p.gender] %>, <%= fmt.MOVEMENT_ONE[p.movement].toLowerCase() %></td>
+      <td class="num"><%= money(p.price) %></td>
+      <td class="num"><%= p.stock %></td>
+      <td><%= p.is_active ? 'Да' : 'Скрыт' %><%= p.is_featured ? ' · на главной' : '' %></td>
+      <td class="actions">
+        <a href="/admin/products/<%= p.id %>/edit">Изменить</a>
+        <form method="post" action="/admin/products/<%= p.id %>/delete" data-confirm="Удалить «<%= p.brand %> <%= p.name %>»? Это нельзя отменить.">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="link-btn link-danger" type="submit">Удалить</button>
+        </form>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+</div>
+<% } %>
+<%- include('_end') %>

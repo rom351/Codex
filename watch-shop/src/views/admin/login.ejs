@@ -1,0 +1,14 @@
+<%- include('../partials/head') %>
+<main id="main" class="wrap main login">
+  <h1 class="page-title">Вход в админ-панель</h1>
+  <% if (error) { %><div class="notice notice-error" role="alert"><%= error %></div><% } %>
+  <form class="panel login-form" method="post" action="/admin/login">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="field">
+      <label for="password">Пароль</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">Войти</button>
+  </form>
+</main>
+<%- include('../partials/end') %>

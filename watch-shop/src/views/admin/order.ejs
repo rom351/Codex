@@ -1,0 +1,52 @@
+<%- include('../partials/head') %>
+<%- include('_nav') %>
+<nav class="crumbs"><a href="/admin">Заказы</a> / <span><%= order.public_id %></span></nav>
+<h1 class="page-title">Заказ <%= order.public_id %></h1>
+
+<% if (error) { %><div class="notice notice-error" role="alert"><%= error %></div><% } %>
+
+<div class="cart-layout">
+  <div>
+    <div class="panel">
+      <h2>Покупатель</h2>
+      <dl class="contacts">
+        <div><dt>Имя</dt><dd><%= order.customer_name %></dd></div>
+        <div><dt>Телефон</dt><dd><a href="tel:<%= order.phone.replace(/[^\d+]/g, '') %>"><%= order.phone %></a></dd></div>
+        <% if (order.email) { %><div><dt>Почта</dt><dd><a href="mailto:<%= order.email %>"><%= order.email %></a></dd></div><% } %>
+        <div><dt>Получение</dt><dd><%= fmt.DELIVERY[order.delivery_method] %><%= order.address ? ` — ${order.address}` : '' %></dd></div>
+        <div><dt>Оплата</dt><dd><%= fmt.PAYMENT[order.payment_method] %></dd></div>
+        <% if (order.comment) { %><div><dt>Комментарий</dt><dd><%= order.comment %></dd></div><% } %>
+        <div><dt>Создан</dt><dd><%= order.created_at %> (UTC)</dd></div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <h2>Состав заказа</h2>
+      <ul class="plain summary-items">
+        <% order.items.forEach((it) => { %><li><span><%= it.name %> × <%= it.qty %></span><span><%= money(it.price * it.qty) %></span></li><% }) %>
+      </ul>
+      <dl class="summary-list">
+        <div><dt>Товары</dt><dd><%= money(order.subtotal) %></dd></div>
+        <div><dt>Доставка</dt><dd><%= money(order.delivery_cost) %></dd></div>
+        <div class="summary-total"><dt>Итого</dt><dd><%= money(order.total) %></dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <aside class="summary">
+    <h2>Статус</h2>
+    <p><span class="status status-<%= order.status %>"><%= fmt.ORDER_STATUSES[order.status] %></span></p>
+    <form method="post" action="/admin/orders/<%= order.id %>/status">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="field">
+        <label for="status">Изменить на</label>
+        <select id="status" name="status">
+          <% Object.entries(fmt.ORDER_STATUSES).forEach(([key, label]) => { %><option value="<%= key %>" <%= key === order.status ? 'selected' : '' %>><%= label %></option><% }) %>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Сохранить</button>
+    </form>
+    <p class="muted small">При отмене заказа товары возвращаются на склад.</p>
+  </aside>
+</div>
+<%- include('_end') %>

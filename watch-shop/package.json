@@ -1,0 +1,22 @@
+{
+  "name": "watch-shop",
+  "version": "1.0.0",
+  "description": "Интернет-магазин часов: каталог, корзина, оформление заказа, админ-панель",
+  "private": true,
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test \"test/*.test.js\"",
+    "backup": "node scripts/backup.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "ejs": "^7.0.1",
+    "express": "^5.2.1",
+    "multer": "^2.4.0"
+  }
+}

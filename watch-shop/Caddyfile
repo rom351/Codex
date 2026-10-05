@@ -1,0 +1,12 @@
+{$DOMAIN} {
+	encode zstd gzip
+	request_body {
+		max_size 8MB
+	}
+	reverse_proxy shop:3000
+}
+
+# Адрес с www перенаправляем на основной (удалите блок, если www не используется)
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}

@@ -1,0 +1,31 @@
+<header class="site-header">
+  <% if (shop.phone || shop.hours) { %>
+  <div class="topbar">
+    <div class="wrap topbar-inner">
+      <span><%= shop.hours %></span>
+      <% if (shop.phone) { %><a href="tel:<%= shop.phone.replace(/[^\d+]/g, '') %>"><%= shop.phone %></a><% } %>
+    </div>
+  </div>
+  <% } %>
+  <div class="wrap header-main">
+    <a class="logo" href="/"><%= shop.name %></a>
+    <nav id="site-nav" class="site-nav" aria-label="Основное меню">
+      <a href="/catalog" <%- path === '/catalog' && !locals.filters?.gender ? 'aria-current="page"' : '' %>>Каталог</a>
+      <a href="/catalog?gender=men">Мужские</a>
+      <a href="/catalog?gender=women">Женские</a>
+      <a href="/catalog?movement=smart">Умные</a>
+      <a href="/delivery" <%- path === '/delivery' ? 'aria-current="page"' : '' %>>Доставка и оплата</a>
+      <a href="/contacts" <%- path === '/contacts' ? 'aria-current="page"' : '' %>>Контакты</a>
+    </nav>
+    <form class="search" action="/catalog" method="get" role="search">
+      <label class="sr-only" for="search-q">Поиск по каталогу</label>
+      <input id="search-q" type="search" name="q" placeholder="Поиск часов" maxlength="60" value="<%= locals.filters?.q || '' %>">
+      <button type="submit">Найти</button>
+    </form>
+    <a class="cart-link" href="/cart" aria-label="Корзина, товаров: <%= cartCount %>">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 8H6"/><circle cx="9.5" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg>
+      <span class="cart-count<%= cartCount ? '' : ' is-empty' %>"><%= cartCount %></span>
+    </a>
+  </div>
+</header>
+<main id="main" class="wrap main">

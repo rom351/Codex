@@ -1,0 +1,15 @@
+<header class="admin-bar">
+  <div class="wrap admin-bar-inner">
+    <a class="logo" href="/admin">Админ: <%= shop.name %></a>
+    <nav class="admin-nav" aria-label="Админ-меню">
+      <a href="/admin" <%- path === '/admin' || path.startsWith('/admin/orders') ? 'aria-current="page"' : '' %>>Заказы</a>
+      <a href="/admin/products" <%- path.startsWith('/admin/products') ? 'aria-current="page"' : '' %>>Товары</a>
+      <a href="/" target="_blank" rel="noopener">Открыть магазин ↗</a>
+    </nav>
+    <form method="post" action="/admin/logout">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button class="link-btn" type="submit">Выйти</button>
+    </form>
+  </div>
+</header>
+<main id="main" class="wrap main">

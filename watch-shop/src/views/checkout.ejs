@@ -1,0 +1,92 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a> / <a href="/cart">Корзина</a> / <span>Оформление</span></nav>
+<h1 class="page-title">Оформление заказа</h1>
+
+<% if (errors.length) { %>
+<div class="notice notice-error" role="alert">
+  <strong>Проверьте форму:</strong>
+  <ul class="plain"><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul>
+</div>
+<% } %>
+
+<form class="cart-layout checkout" method="post" action="/checkout" id="checkout-form" data-subtotal="<%= cart.subtotal %>" data-currency="<%= currency %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="checkout-fields">
+    <fieldset class="panel">
+      <legend>Контакты</legend>
+      <div class="field">
+        <label for="customer_name">Имя и фамилия *</label>
+        <input id="customer_name" name="customer_name" type="text" autocomplete="name" required maxlength="100" value="<%= form.customer_name || '' %>">
+      </div>
+      <div class="field">
+        <label for="phone">Телефон *</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="+7 900 123-45-67" value="<%= form.phone || '' %>">
+      </div>
+      <div class="field">
+        <label for="email">Электронная почта</label>
+        <input id="email" name="email" type="email" autocomplete="email" maxlength="120" value="<%= form.email || '' %>">
+      </div>
+    </fieldset>
+
+    <fieldset class="panel">
+      <legend>Получение</legend>
+      <% ['courier', 'post', 'pickup'].forEach((key) => { %>
+      <label class="option">
+        <input type="radio" name="delivery_method" value="<%= key %>" data-cost="<%= costs[key] %>" <%= form.delivery_method === key ? 'checked' : '' %>>
+        <span class="option-title"><%= DELIVERY[key] %></span>
+        <span class="option-note"><%= costs[key] === 0 ? 'бесплатно' : money(costs[key]) %></span>
+      </label>
+      <% }) %>
+      <div class="field" id="address-field">
+        <label for="address">Адрес доставки *</label>
+        <textarea id="address" name="address" rows="2" maxlength="300" autocomplete="street-address" placeholder="Город, улица, дом, квартира, индекс"><%= form.address || '' %></textarea>
+      </div>
+    </fieldset>
+
+    <fieldset class="panel">
+      <legend>Оплата</legend>
+      <% ['cod', 'transfer'].forEach((key) => { %>
+      <label class="option">
+        <input type="radio" name="payment_method" value="<%= key %>" <%= form.payment_method === key ? 'checked' : '' %>>
+        <span class="option-title"><%= PAYMENT[key] %></span>
+      </label>
+      <% }) %>
+      <p class="muted">При оплате переводом реквизиты пришлём после подтверждения заказа.</p>
+    </fieldset>
+
+    <div class="field">
+      <label for="comment">Комментарий к заказу</label>
+      <textarea id="comment" name="comment" rows="2" maxlength="500"><%= form.comment || '' %></textarea>
+    </div>
+
+    <div class="hp" aria-hidden="true">
+      <label for="website">Не заполняйте это поле</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
+
+    <label class="check consent">
+      <input type="checkbox" name="consent" required>
+      <span>Согласен(на) на обработку персональных данных согласно <a href="/privacy" target="_blank" rel="noopener">политике конфиденциальности</a></span>
+    </label>
+  </div>
+
+  <aside class="summary">
+    <h2>Ваш заказ</h2>
+    <ul class="plain summary-items">
+      <% cart.lines.forEach(({ product, qty, sum }) => { %>
+      <li><span><%= product.brand %> <%= product.name %> × <%= qty %></span><span><%= money(sum) %></span></li>
+      <% }) %>
+    </ul>
+    <dl class="summary-list">
+      <div><dt>Товары</dt><dd><%= money(cart.subtotal) %></dd></div>
+      <div><dt>Доставка</dt><dd id="sum-delivery">—</dd></div>
+      <div class="summary-total"><dt>Итого</dt><dd id="sum-total"><%= money(cart.subtotal) %></dd></div>
+    </dl>
+    <button class="btn btn-primary btn-block" type="submit">Подтвердить заказ</button>
+    <p class="muted small">Менеджер свяжется с вами для подтверждения заказа.</p>
+  </aside>
+</form>
+
+<%- include('partials/footer') %>

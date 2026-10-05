@@ -1,0 +1,100 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a> / <span><%= heading %></span></nav>
+<h1 class="page-title"><%= heading %></h1>
+
+<div class="catalog">
+  <aside class="filters">
+    <details class="filters-box" open>
+      <summary>Фильтры</summary>
+      <form method="get" action="/catalog" class="filters-form" id="filters-form">
+        <% if (filters.q) { %><input type="hidden" name="q" value="<%= filters.q %>"><% } %>
+
+        <fieldset>
+          <legend>Для кого</legend>
+          <label class="check"><input type="radio" name="gender" value="" <%= !filters.gender ? 'checked' : '' %>> Все</label>
+          <% Object.entries(GENDERS).forEach(([key, label]) => { %>
+            <label class="check"><input type="radio" name="gender" value="<%= key %>" <%= filters.gender === key ? 'checked' : '' %>> <%= label %></label>
+          <% }) %>
+        </fieldset>
+
+        <fieldset>
+          <legend>Механизм</legend>
+          <label class="check"><input type="radio" name="movement" value="" <%= !filters.movement ? 'checked' : '' %>> Любой</label>
+          <% Object.entries(MOVEMENTS).forEach(([key, label]) => { %>
+            <label class="check"><input type="radio" name="movement" value="<%= key %>" <%= filters.movement === key ? 'checked' : '' %>> <%= label %></label>
+          <% }) %>
+        </fieldset>
+
+        <div class="field">
+          <label for="f-brand">Бренд</label>
+          <select id="f-brand" name="brand">
+            <option value="">Все бренды</option>
+            <% brands.forEach((b) => { %><option value="<%= b %>" <%= filters.brand === b ? 'selected' : '' %>><%= b %></option><% }) %>
+          </select>
+        </div>
+
+        <div class="field">
+          <span class="label">Цена</span>
+          <div class="range">
+            <input type="number" name="min" min="0" inputmode="numeric" placeholder="от" aria-label="Цена от" value="<%= filters.minPrice != null ? filters.minPrice / 100 : '' %>">
+            <span aria-hidden="true">—</span>
+            <input type="number" name="max" min="0" inputmode="numeric" placeholder="до" aria-label="Цена до" value="<%= filters.maxPrice != null ? filters.maxPrice / 100 : '' %>">
+          </div>
+        </div>
+
+        <label class="check"><input type="checkbox" name="stock" value="1" <%= filters.inStock ? 'checked' : '' %>> Только в наличии</label>
+
+        <div class="filters-actions">
+          <button class="btn btn-primary btn-block" type="submit">Применить</button>
+          <a class="btn btn-ghost btn-block" href="/catalog">Сбросить</a>
+        </div>
+      </form>
+    </details>
+  </aside>
+
+  <section class="results" aria-live="polite">
+    <div class="results-bar">
+      <p class="muted">Найдено: <%= result.total %></p>
+      <form method="get" action="/catalog" class="sort-form">
+        <% ['q','gender','movement','brand'].forEach((k) => { if (filters[k]) { %><input type="hidden" name="<%= k %>" value="<%= filters[k] %>"><% } }) %>
+        <% if (filters.minPrice != null) { %><input type="hidden" name="min" value="<%= filters.minPrice / 100 %>"><% } %>
+        <% if (filters.maxPrice != null) { %><input type="hidden" name="max" value="<%= filters.maxPrice / 100 %>"><% } %>
+        <% if (filters.inStock) { %><input type="hidden" name="stock" value="1"><% } %>
+        <label for="sort" class="sr-only">Сортировка</label>
+        <select id="sort" name="sort" data-autosubmit>
+          <% Object.entries(SORTS).forEach(([key, s]) => { %>
+            <option value="<%= key %>" <%= (filters.sort || 'new') === key ? 'selected' : '' %>><%= s.label %></option>
+          <% }) %>
+        </select>
+        <noscript><button class="btn btn-ghost" type="submit">Показать</button></noscript>
+      </form>
+    </div>
+
+    <% if (result.items.length === 0) { %>
+      <div class="empty">
+        <p class="empty-title">Ничего не найдено</p>
+        <p class="muted">Попробуйте изменить фильтры или сбросить их.</p>
+        <a class="btn btn-primary" href="/catalog">Показать все часы</a>
+      </div>
+    <% } else { %>
+      <div class="grid grid-3">
+        <% result.items.forEach((p) => { %><%- include('partials/card', { p }) %><% }) %>
+      </div>
+
+      <% if (result.pages > 1) { %>
+      <nav class="pagination" aria-label="Страницы">
+        <% if (result.page > 1) { %><a href="/catalog<%= qs({ page: result.page - 1 }) %>" rel="prev">← Назад</a><% } %>
+        <% for (let i = 1; i <= result.pages; i++) { %>
+          <% if (i === result.page) { %><span aria-current="page"><%= i %></span>
+          <% } else { %><a href="/catalog<%= qs({ page: i }) %>"><%= i %></a><% } %>
+        <% } %>
+        <% if (result.page < result.pages) { %><a href="/catalog<%= qs({ page: result.page + 1 }) %>" rel="next">Вперёд →</a><% } %>
+      </nav>
+      <% } %>
+    <% } %>
+  </section>
+</div>
+
+<%- include('partials/footer') %>

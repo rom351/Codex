@@ -1,0 +1,87 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const discount = product.old_price && product.old_price > product.price ? Math.round((1 - product.price / product.old_price) * 100) : 0; %>
+
+<nav class="crumbs" aria-label="Навигация">
+  <a href="/">Главная</a> / <a href="/catalog">Каталог</a> / <a href="/catalog?brand=<%= encodeURIComponent(product.brand) %>"><%= product.brand %></a> / <span><%= product.name %></span>
+</nav>
+
+<% if (added) { %>
+<div class="notice notice-ok" role="status">
+  Товар добавлен в корзину. <a href="/cart">Перейти в корзину</a>
+</div>
+<% } %>
+
+<div class="product">
+  <div class="product-media">
+    <img src="<%= productImage(product) %>" alt="<%= product.brand %> <%= product.name %>" width="400" height="500">
+    <% if (discount > 0 && product.stock > 0) { %><span class="badge badge-sale">−<%= discount %>%</span><% } %>
+  </div>
+
+  <div class="product-info">
+    <p class="card-brand"><%= product.brand %></p>
+    <h1 class="page-title"><%= product.name %></h1>
+    <p class="muted"><%= fmt.GENDERS[product.gender] %> · <%= fmt.MOVEMENT_ONE[product.movement] %></p>
+
+    <p class="price price-lg">
+      <span class="price-now"><%= money(product.price) %></span>
+      <% if (discount > 0) { %><s class="price-old"><%= money(product.old_price) %></s><% } %>
+    </p>
+
+    <% if (product.stock > 0) { %>
+      <p class="stock stock-ok">В наличии<%= product.stock <= 3 ? ` — осталось ${product.stock} шт.` : '' %></p>
+      <form class="buy" method="post" action="/cart/add">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="product_id" value="<%= product.id %>">
+        <div class="field field-qty">
+          <label for="qty">Количество</label>
+          <select id="qty" name="qty">
+            <% for (let i = 1; i <= maxQty; i++) { %><option value="<%= i %>"><%= i %></option><% } %>
+          </select>
+        </div>
+        <button class="btn btn-primary" type="submit">В корзину</button>
+        <button class="btn btn-dark" type="submit" name="buy_now" value="1">Купить сразу</button>
+      </form>
+    <% } else { %>
+      <p class="stock stock-out">Нет в наличии</p>
+      <p class="muted">Свяжитесь с нами — сообщим, когда модель поступит.</p>
+    <% } %>
+
+    <ul class="plain mini-perks">
+      <li>Доставка курьером, почтой или самовывоз</li>
+      <li>Оплата при получении или переводом</li>
+      <li>Гарантия на часы</li>
+    </ul>
+  </div>
+</div>
+
+<section class="product-details">
+  <% if (product.description) { %>
+  <div>
+    <h2>Описание</h2>
+    <p class="prose"><%= product.description %></p>
+  </div>
+  <% } %>
+  <% if (specs.length) { %>
+  <div>
+    <h2>Характеристики</h2>
+    <table class="specs">
+      <tbody>
+        <% specs.forEach(([k, v]) => { %><tr><th scope="row"><%= k %></th><td><%= v %></td></tr><% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</section>
+
+<% if (related.length) { %>
+<section aria-labelledby="related-h">
+  <div class="section-head"><h2 id="related-h">Похожие модели</h2></div>
+  <div class="grid">
+    <% related.forEach((p) => { %><%- include('partials/card', { p }) %><% }) %>
+  </div>
+</section>
+<% } %>
+
+<script type="application/ld+json"><%- ldJson %></script>
+<%- include('partials/footer') %>

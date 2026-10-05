@@ -1,0 +1,43 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="hero-text">
+    <p class="eyebrow">Новая коллекция</p>
+    <h1><%= shop.slogan %></h1>
+    <p class="lead">Механические, кварцевые и умные часы на любой вкус и бюджет. Подберём модель и доставим по всей стране.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/catalog">Смотреть каталог</a>
+      <a class="btn btn-ghost" href="/delivery">Доставка и оплата</a>
+    </div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <img src="/img/p/hero-nordhaus.svg" alt="" width="400" height="500">
+  </div>
+</section>
+
+<section class="tiles" aria-label="Разделы каталога">
+  <a class="tile" href="/catalog?gender=men"><span class="tile-title">Мужские</span><span class="tile-sub">Классика, дайверы, хронографы</span></a>
+  <a class="tile" href="/catalog?gender=women"><span class="tile-title">Женские</span><span class="tile-sub">Изящные и повседневные модели</span></a>
+  <a class="tile" href="/catalog?movement=automatic"><span class="tile-title">Механика</span><span class="tile-sub">Автоподзавод и ручной завод</span></a>
+  <a class="tile" href="/catalog?movement=smart"><span class="tile-title">Умные часы</span><span class="tile-sub">Пульс, шаги, уведомления</span></a>
+</section>
+
+<section aria-labelledby="featured-h">
+  <div class="section-head">
+    <h2 id="featured-h">Выбор магазина</h2>
+    <a href="/catalog">Весь каталог →</a>
+  </div>
+  <div class="grid">
+    <% featured.forEach((p) => { %><%- include('partials/card', { p }) %><% }) %>
+  </div>
+</section>
+
+<section class="perks" aria-label="Преимущества">
+  <div class="perk"><strong>Гарантия</strong><span>На каждую модель</span></div>
+  <div class="perk"><strong>Доставка</strong><span>Курьером, почтой или самовывоз</span></div>
+  <div class="perk"><strong>Проверка</strong><span>Осмотр часов перед отправкой</span></div>
+  <div class="perk"><strong>Возврат</strong><span>В соответствии с законом</span></div>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,16 @@
+<% const discount = p.old_price && p.old_price > p.price ? Math.round((1 - p.price / p.old_price) * 100) : 0; %>
+<article class="card">
+  <a class="card-media" href="/watch/<%= p.slug %>" tabindex="-1" aria-hidden="true">
+    <img src="<%= productImage(p) %>" alt="" width="400" height="500" loading="lazy">
+    <% if (p.stock < 1) { %><span class="badge badge-muted">Нет в наличии</span>
+    <% } else if (discount > 0) { %><span class="badge badge-sale">−<%= discount %>%</span><% } %>
+  </a>
+  <div class="card-body">
+    <p class="card-brand"><%= p.brand %></p>
+    <h3 class="card-title"><a href="/watch/<%= p.slug %>"><%= p.name %></a></h3>
+    <p class="price">
+      <span class="price-now"><%= money(p.price) %></span>
+      <% if (discount > 0) { %><s class="price-old"><%= money(p.old_price) %></s><% } %>
+    </p>
+  </div>
+</article>

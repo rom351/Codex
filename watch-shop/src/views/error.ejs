@@ -1,0 +1,9 @@
+<%- include('partials/head', { meta: { title: `${title} — ${shop.name}`, description: '', robots: 'noindex,nofollow' } }) %>
+<%- include('partials/header') %>
+<div class="empty">
+  <p class="eyebrow">Ошибка</p>
+  <h1 class="page-title"><%= title %></h1>
+  <p class="muted"><%= message %></p>
+  <a class="btn btn-primary" href="/">На главную</a>
+</div>
+<%- include('partials/footer') %>

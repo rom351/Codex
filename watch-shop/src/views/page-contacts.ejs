@@ -1,0 +1,16 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<nav class="crumbs" aria-label="Навигация"><a href="/">Главная</a> / <span>Контакты</span></nav>
+<h1 class="page-title">Контакты</h1>
+<div class="prose-page">
+  <dl class="contacts">
+    <% if (shop.phone) { %><div><dt>Телефон</dt><dd><a href="tel:<%= shop.phone.replace(/[^\d+]/g, '') %>"><%= shop.phone %></a></dd></div><% } %>
+    <% if (shop.email) { %><div><dt>Почта</dt><dd><a href="mailto:<%= shop.email %>"><%= shop.email %></a></dd></div><% } %>
+    <% if (shop.address) { %><div><dt>Адрес</dt><dd><%= shop.address %></dd></div><% } %>
+    <div><dt>Время работы</dt><dd><%= shop.hours %></dd></div>
+  </dl>
+  <% if (!shop.phone && !shop.email && !shop.address) { %>
+  <p class="muted">Контактные данные магазина пока не заполнены.</p>
+  <% } %>
+</div>
+<%- include('partials/footer') %>
