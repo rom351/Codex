@@ -218,19 +218,20 @@ def midi(n):
     return 440.0 * 2 ** ((n - 69) / 12)
 
 
-BPM = 110
+BPM = 126
 BEAT = 60 / BPM
 BAR = 4 * BEAT
+S16 = BEAT / 4
 # прогрессии: (бас MIDI, аккорд MIDI)
-MINOR = [(45, (57, 60, 64)), (41, (53, 57, 60)), (45, (57, 60, 64)), (43, (55, 59, 62))]   # Am F Am G
+MINOR = [(45, (57, 60, 64)), (41, (53, 57, 60)), (48, (60, 64, 67)), (43, (55, 59, 62))]   # Am F C G
 MAJOR = [(48, (60, 64, 67)), (43, (55, 59, 62)), (45, (57, 60, 64)), (41, (53, 57, 60))]   # C G Am F
 
 
 def pad_note(freq, dur):
     t = t_axis(dur)
-    s = sum(np.sin(2 * np.pi * freq * h * t + h) / h for h in range(1, 7))
-    a = np.minimum(1, t / 0.35) * np.minimum(1, (dur - t) / 0.45)
-    return s * a * 0.22
+    s_ = sum(np.sin(2 * np.pi * freq * h * t + h) / h for h in range(1, 7))
+    a_ = np.minimum(1, t / 0.2) * np.minimum(1, (dur - t) / 0.2)
+    return s_ * a_ * 0.22
 
 
 def pluck(freq, dur=0.3, rate=9.0):
@@ -238,48 +239,118 @@ def pluck(freq, dur=0.3, rate=9.0):
     return (np.sin(2 * np.pi * freq * t) + 0.3 * np.sin(2 * np.pi * freq * 2 * t)) * np.exp(-t * rate)
 
 
+def saw_bass(freq, dur=0.22):
+    t = t_axis(dur)
+    s_ = sum(np.sin(2 * np.pi * freq * h * t) / h for h in range(1, 6))
+    return s_ * np.exp(-t * 7) * np.minimum(1, t * 400)
+
+
+def stab(freqs, dur=0.16):
+    t = t_axis(dur)
+    s_ = sum(sum(np.sin(2 * np.pi * f * h * t) / h for h in range(1, 5)) for f in freqs)
+    return s_ * np.exp(-t * 16) * np.minimum(1, t * 500) * 0.35
+
+
+def kick():
+    return mix(sweep(160, 44, 0.28, 11) * 1.2, click() * 0.3)
+
+
+def clap():
+    out = np.zeros(int(SR * 0.2))
+    for k in range(3):
+        n = np.diff(noise(0.15), prepend=0) * decay(0.15, 28 if k == 2 else 90)
+        out[int(k * 0.011 * SR):int(k * 0.011 * SR) + len(n)] += n[:len(out) - int(k * 0.011 * SR)]
+    return out
+
+
+def hat(dur=0.045, rate=75):
+    return np.diff(noise(dur), prepend=0) * decay(dur, rate)
+
+
+def crash():
+    n = np.diff(noise(1.8), prepend=0)
+    return n * decay(1.8, 2.4) * 0.9
+
+
+def riser(dur):
+    n = noise(dur)
+    out = np.zeros_like(n)
+    chunks = 24
+    cl = len(n) // chunks + 1
+    for c in range(chunks):
+        k = 60 - 56 * c / (chunks - 1)
+        out[c * cl:(c + 1) * cl] = lowpass(n, k)[c * cl:(c + 1) * cl]
+    out = out / (np.max(np.abs(out)) + 1e-9)
+    return out * np.linspace(0, 1, len(out)) ** 1.6 * 0.9
+
+
+def render_section(dur, minor, level, lead=False, clap_from=0.0, hats_from=0.0, ending=False):
+    """Секция музыки: level 1 — спокойнее, 2 — полный ритм, 3 — с мелодией."""
+    n = int(dur * SR)
+    bed = np.zeros(n)      # гармония и бас (с «накачкой» от бочки)
+    drums = np.zeros(n)
+    prog = MINOR if minor else MAJOR
+    nb = int(dur / BAR) + 2
+    for bar in range(nb):
+        t0 = bar * BAR
+        if t0 >= dur:
+            break
+        bass, chord = prog[bar % 4]
+        for note in chord:
+            add(bed, pad_note(midi(note), BAR + 0.1), t0, 0.40 if level == 1 else 0.34)
+        for s_ in range(8):                                   # бас восьмыми с октавным прыжком
+            f = midi(bass) * (2 if s_ in (3, 7) else 1)
+            add(bed, saw_bass(f, 0.2), t0 + s_ * BEAT / 2, 0.55)
+        steps = 8 if level == 1 else 16                       # арпеджио
+        pat = [0, 1, 2, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 2, 1]
+        for s_ in range(steps):
+            tt = t0 + s_ * (BAR / steps)
+            add(bed, pluck(midi(chord[pat[s_] % 3] + 12), 0.2, 14), tt, 0.26)
+        if level >= 2:
+            for s_ in (3, 6, 10, 14):                         # синкопированные аккорды-стэбы
+                add(bed, stab([midi(x + 12) for x in chord]), t0 + s_ * S16, 0.5)
+        if lead:
+            mel = [chord[2] + 12, chord[1] + 12, chord[2] + 12, chord[0] + 24, chord[2] + 12, chord[1] + 12, chord[0] + 24, chord[2] + 24]
+            for s_, nt in enumerate(mel):
+                add(bed, pluck(midi(nt), 0.4, 6), t0 + s_ * BEAT / 2, 0.30)
+        for beat in range(4):
+            tb = t0 + beat * BEAT
+            add(drums, kick(), tb, 0.85)
+            if tb >= clap_from and beat in (1, 3):
+                add(drums, clap(), tb, 0.35)
+            if tb >= hats_from:
+                for q in range(4 if level >= 2 else 2):
+                    th = tb + q * (BEAT / (4 if level >= 2 else 2))
+                    add(drums, hat(), th, 0.12 if q % 2 == 0 else 0.07)
+                add(drums, hat(0.18, 22), tb + BEAT / 2, 0.10)   # открытый хэт на «и»
+    # «накачка»: бас и гармония проседают на каждый удар бочки
+    t = np.arange(n) / SR
+    pump = 1 - 0.55 * np.exp(-(t % BEAT) / 0.11)
+    out = bed * pump + drums
+    fade = int(0.08 * SR)
+    out[-fade:] *= np.linspace(1, 0, fade)
+    return out
+
+
 def make_music():
     b = np.zeros(N)
-    nbars = int(DUR / BAR) + 2
-    for bar in range(nbars):
-        t0 = bar * BAR
-        if t0 >= DUR:
-            break
-        intense = t0 >= 12                                   # с сцены 2 музыка светлеет и появляется ритм
-        prog = MAJOR if intense else MINOR
-        bass, chord = prog[bar % 4]
-        for n in chord:
-            add(b, pad_note(midi(n), BAR + 0.5), t0, 0.5 if intense else 0.38)
-        # бас
-        steps = 8 if intense else 2
-        for s in range(steps):
-            tt = t0 + s * (BAR / steps)
-            add(b, pluck(midi(bass), 0.4 if intense else 0.8, 5 if intense else 3), tt, 0.55)
-        if intense:
-            for beat in range(4):                            # бочка и шейкер
-                tb = t0 + beat * BEAT
-                add(b, sweep(130, 48, 0.2, 14) * 1.1, tb, 0.7)
-                for off in (0, 0.5):
-                    th = tb + off * BEAT
-                    h = np.diff(noise(0.05), prepend=0) * decay(0.05, 70)
-                    add(b, h, th, 0.10 if off == 0 else 0.06)
-            pat = [0, 1, 2, 1, 2, 1, 0, 1]                  # арпеджио
-            for s in range(8):
-                tt = t0 + s * (BEAT / 2)
-                add(b, pluck(midi(chord[pat[s] % 3] + 12), 0.28, 10), tt, 0.28)
-            if t0 >= 38:                                     # от сцены 4 — яркая мелодия сверху
-                mel = [chord[2] + 12, chord[1] + 12, chord[2] + 12, chord[0] + 24]
-                for s, nt in enumerate(mel):
-                    add(b, pluck(midi(nt), 0.5, 5), t0 + s * BEAT, 0.3)
-        else:
-            for beat in (0, 2):                              # редкий «тик» тревоги
-                add(b, tick(3200), t0 + beat * BEAT, 0.5)
+    secs = [  # начало, конец, минор, уровень, мелодия, clap_from, hats_from
+        (0.0, 12.0, True, 1, False, 3.0, 2.0),
+        (12.0, 38.0, False, 2, False, 0.0, 0.0),
+        (38.0, 47.0, False, 3, True, 0.0, 0.0),
+        (47.0, 56.0, False, 3, True, 0.0, 0.0),
+    ]
+    for start, end, minor, level, lead, cf, hf in secs:
+        add(b, render_section(end - start, minor, level, lead, cf, hf), start, 1.0)
+        add(b, riser(1.8), end - 1.8, 0.35) if end < DUR else None
+        if start > 0:
+            add(b, crash(), start, 0.5)
+    add(b, mix(stab([midi(60), midi(64), midi(67), midi(72)], 0.5), pluck(midi(84), 1.2, 3)), 55.2, 0.9)  # финальный аккорд
     env = np.ones(N)
-    fi, fo = int(1.2 * SR), int(3.0 * SR)
+    fi, fo = int(0.3 * SR), int(2.2 * SR)
     env[:fi] = np.linspace(0, 1, fi)
     env[-fo:] = np.linspace(1, 0, fo)
     b *= env
-    # лёгкая «ширина»: правый канал с микро-задержкой
     d = int(0.012 * SR)
     r = np.concatenate([np.zeros(d), b[:-d]])
     return np.stack([b, 0.6 * b + 0.4 * r], axis=1)
