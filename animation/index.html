@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<title>Ролик: ідеальне ТЗ за кілька секунд</title>
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<svg id="stage" xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script>
+// ====================================================================
+// Анімаційний ролик 60 с (1080x1920, вертикальний формат).
+// Вся анімація — функція від часу: window.renderAt(t), t в секундах.
+// Це дозволяє рендерити кадри детерміновано (див. render.js).
+// ====================================================================
+const FONT = '"Liberation Sans","DejaVu Sans",Arial,sans-serif';
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('stage');
+
+// ---------- утиліти ----------
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in (attrs || {})) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const g = (parent, attrs) => el('g', attrs, parent);
+const rect = (p, x, y, w, h, rx, fill, extra) =>
+  el('rect', Object.assign({ x, y, width: w, height: h, rx: rx || 0, fill }, extra || {}), p);
+const circle = (p, cx, cy, r, fill, extra) =>
+  el('circle', Object.assign({ cx, cy, r, fill }, extra || {}), p);
+function text(p, str, x, y, size, fill, extra) {
+  const e = el('text', Object.assign({
+    x, y, 'font-size': size, fill, 'font-family': FONT, 'font-weight': 700, 'text-anchor': 'middle'
+  }, extra || {}), p);
+  e.textContent = str;
+  return e;
+}
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeIn = t => t * t;
+const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+function rng(seed) { // mulberry32
+  let a = seed >>> 0;
+  return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+const bez = (a, b, c, t) => { const u = 1 - t;
+  return [u * u * a[0] + 2 * u * t * b[0] + t * t * c[0], u * u * a[1] + 2 * u * t * b[1] + t * t * c[1]]; };
+const setT = (e, x, y, s, r) => e.setAttribute('transform',
+  `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${(r || 0).toFixed(2)}) scale(${s == null ? 1 : s.toFixed(4)})`);
+const typed = (str, u, start, cps) => str.slice(0, Math.max(0, Math.floor((u - start) * (cps || 24))));
+
+// ---------- градієнти ----------
+const defs = el('defs', {}, svg);
+function grad(id, stops, x1, y1, x2, y2) {
+  const gr = el('linearGradient', { id, x1, y1, x2, y2 }, defs);
+  stops.forEach(([o, c]) => el('stop', { offset: o, 'stop-color': c }, gr));
+}
+grad('gWall', [[0, '#e8eef7'], [1, '#c9d6ea']], 0, 0, 0, 1);
+grad('gBlue', [[0, '#eaf2ff'], [1, '#cfe0fb']], 0, 0, 0, 1);
+grad('gCard', [[0, '#eef2ff'], [1, '#dbe4ff']], 0, 0, 0, 1);
+grad('gMint', [[0, '#ecfdf5'], [1, '#c8f1dc']], 0, 0, 0, 1);
+grad('gViolet', [[0, '#f3e8ff'], [1, '#d9dcff']], 0, 0, 0, 1);
+grad('gNote', [[0, '#2f5fb8'], [1, '#1b2f6b']], 0, 0, 1, 1);
+grad('gBeam', [[0, 'rgba(34,211,238,0.55)'], [1, 'rgba(34,211,238,0.05)']], 0, 1, 0, 0);
+grad('gFloor', [[0, '#8a97ab'], [1, '#6b778c']], 0, 0, 0, 1);
+
+// ---------- субтитри ----------
+function makeSubtitle(parent, lines) {
+  const root = g(parent);
+  const SIZE = 58, LH = 74, TOP = 1440;
+  const box = rect(root, 0, 0, 10, 10, 38, 'rgba(15,23,42,0.80)');
+  const ts = lines.map((l, i) => text(root, l, 540, TOP + 66 + i * LH, SIZE, '#ffffff'));
+  const W = Math.max(...ts.map(t => t.getBBox().width));
+  const h = lines.length * LH + 36;
+  const w = Math.min(1000, W + 90);
+  box.setAttribute('x', 540 - w / 2); box.setAttribute('y', TOP);
+  box.setAttribute('width', w); box.setAttribute('height', h);
+  const scale = Math.min(1, 900 / W);
+  if (scale < 1) ts.forEach(t => t.setAttribute('textLength', 0) || t.removeAttribute('textLength'));
+  return (u) => {
+    const k = easeOutBack(seg(u, 0.25, 0.7));
+    const a = seg(u, 0.25, 0.55);
+    // масштаб навколо центру плашки
+    const cy = TOP + h / 2;
+    root.setAttribute('transform', `translate(540 ${cy}) scale(${(0.8 + 0.2 * k).toFixed(3)}) translate(-540 ${-cy})`);
+    root.setAttribute('opacity', a.toFixed(3));
+  };
+}
+
+// ---------- персонаж-бухгалтер ----------
+const REST = { lS: [455, 850], lE: [385, 1010], lH: [470, 1120], rS: [625, 850], rE: [695, 1010], rH: [610, 1120] };
+const HEAD = { lE: [325, 730], lH: [447, 595], rE: [755, 730], rH: [633, 595] };
+const COF = { rE: [725, 940], rH: [624, 742] };
+const SKIN = '#f2c6a0', SHIRT = '#2563eb';
+
+function makeChar(parent) {
+  const root = g(parent);
+  rect(root, 395, 770, 290, 430, 80, '#475569');                    // спинка крісла
+  rect(root, 410, 790, 260, 400, 80, SHIRT);                          // торс
+  el('polygon', { points: '505,795 540,860 575,795', fill: '#fff' }, root);   // комір
+  el('polygon', { points: '540,850 524,885 540,1010 556,885', fill: '#dc2626' }, root); // краватка
+  rect(root, 508, 720, 64, 90, 20, SKIN);                             // шия
+  const head = g(root);
+  circle(head, 433, 628, 22, SKIN); circle(head, 647, 628, 22, SKIN);  // вуха
+  el('ellipse', { cx: 540, cy: 625, rx: 106, ry: 122, fill: SKIN }, head);
+  el('path', { d: 'M432 610 Q432 482 540 478 Q648 482 648 610 Q628 548 540 542 Q452 548 432 610Z', fill: '#3a2a22' }, head);
+  const blushL = circle(head, 468, 680, 21, '#f87171', { opacity: 0 });
+  const blushR = circle(head, 612, 680, 21, '#f87171', { opacity: 0 });
+  // окуляри та очі
+  const wl = el('ellipse', { cx: 495, cy: 628, rx: 28, ry: 26, fill: '#fff' }, head);
+  const wr = el('ellipse', { cx: 585, cy: 628, rx: 28, ry: 26, fill: '#fff' }, head);
+  const pl = el('ellipse', { cx: 495, cy: 628, rx: 10, ry: 10, fill: '#1f2937' }, head);
+  const pr = el('ellipse', { cx: 585, cy: 628, rx: 10, ry: 10, fill: '#1f2937' }, head);
+  circle(head, 495, 628, 36, 'rgba(147,197,253,0.18)', { stroke: '#1f2937', 'stroke-width': 6 });
+  circle(head, 585, 628, 36, 'rgba(147,197,253,0.18)', { stroke: '#1f2937', 'stroke-width': 6 });
+  el('line', { x1: 531, y1: 625, x2: 549, y2: 625, stroke: '#1f2937', 'stroke-width': 6 }, head);
+  const bl = el('line', { stroke: '#3a2a22', 'stroke-width': 9, 'stroke-linecap': 'round' }, head);
+  const br = el('line', { stroke: '#3a2a22', 'stroke-width': 9, 'stroke-linecap': 'round' }, head);
+  el('path', { d: 'M536 650 Q526 672 542 674', stroke: '#d9a47e', 'stroke-width': 5, fill: 'none', 'stroke-linecap': 'round' }, head); // ніс
+  const mouth = el('path', { fill: 'none', stroke: '#7c2d12', 'stroke-width': 7, 'stroke-linecap': 'round' }, head);
+  const mouthO = el('ellipse', { cx: 540, cy: 705, rx: 20, ry: 14, fill: '#7f1d1d' }, head);
+  const sweat = [0, 1].map(() => el('path', { d: 'M0 -14 Q10 4 0 11 Q-10 4 0 -14Z', fill: '#60a5fa', opacity: 0 }, head));
+
+  // руки
+  const arms = g(root);
+  const lLine = el('polyline', { fill: 'none', stroke: SHIRT, 'stroke-width': 50, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, arms);
+  const rLine = el('polyline', { fill: 'none', stroke: SHIRT, 'stroke-width': 50, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, arms);
+  const lHand = circle(arms, 0, 0, 28, SKIN);
+  // горня з кавою
+  const cup = g(arms, { opacity: 0 });
+  el('path', { d: 'M-36 -34 L36 -34 L28 44 L-28 44Z', fill: '#fff', stroke: '#94a3b8', 'stroke-width': 5, 'stroke-linejoin': 'round' }, cup);
+  el('ellipse', { cx: 0, cy: -34, rx: 36, ry: 9, fill: '#7c4a21' }, cup);
+  el('path', { d: 'M34 -14 q34 2 26 26 q-4 12 -30 12', fill: 'none', stroke: '#94a3b8', 'stroke-width': 7, 'stroke-linecap': 'round' }, cup);
+  rect(cup, -30, 4, 60, 20, 6, '#ef4444');
+  const steam = [-16, 0, 16].map(x => el('path', { d: `M${x} -46 q-10 -18 0 -34 q10 -16 0 -32`, fill: 'none', stroke: '#fff', 'stroke-width': 6, 'stroke-linecap': 'round', opacity: 0 }, cup));
+  const rHand = circle(arms, 0, 0, 28, SKIN);
+
+  const pts = (a, b) => a.map((p, i) => p.join(',')).join(' ');
+  return {
+    root,
+    update(s) {
+      const hw = s.head || 0, cw = s.coffee || 0, sip = s.sip || 0;
+      const L = [REST.lS, [lerp(REST.lE[0], HEAD.lE[0], hw), lerp(REST.lE[1], HEAD.lE[1], hw)],
+                          [lerp(REST.lH[0], HEAD.lH[0], hw), lerp(REST.lH[1], HEAD.lH[1], hw)]];
+      const rE = [lerp(lerp(REST.rE[0], HEAD.rE[0], hw), COF.rE[0], cw), lerp(lerp(REST.rE[1], HEAD.rE[1], hw), COF.rE[1], cw)];
+      const rH = [lerp(lerp(REST.rH[0], HEAD.rH[0], hw), COF.rH[0], cw) - 8 * sip, lerp(lerp(REST.rH[1], HEAD.rH[1], hw), COF.rH[1], cw) - 14 * sip];
+      const R = [REST.rS, rE, rH];
+      lLine.setAttribute('points', pts(L)); rLine.setAttribute('points', pts(R));
+      lHand.setAttribute('cx', L[2][0]); lHand.setAttribute('cy', L[2][1]);
+      rHand.setAttribute('cx', rH[0]); rHand.setAttribute('cy', rH[1]);
+      cup.setAttribute('opacity', cw > 0.02 ? 1 : 0);
+      setT(cup, rH[0] + 22, rH[1] - 24, 1, -22 * cw - 10 * sip);
+      steam.forEach((p, i) => p.setAttribute('opacity', (cw > 0.5 ? 0.55 * (0.5 + 0.5 * Math.sin(s.t * 3 + i * 2)) : 0).toFixed(3)));
+      // обличчя
+      const m = s.mood || 0, pan = Math.max(0, -m), hap = Math.max(0, m);
+      const dx = (s.look ? s.look[0] : 0), dy = (s.look ? s.look[1] : 0);
+      const blink = (s.t % 3.4) < 0.12 ? 0.12 : 1;
+      wl.setAttribute('ry', 26 * blink); wr.setAttribute('ry', 26 * blink);
+      [pl, pr].forEach((p, i) => { p.setAttribute('cx', (i ? 585 : 495) + dx); p.setAttribute('cy', 628 + dy);
+        p.setAttribute('ry', 10 * blink); p.setAttribute('rx', 10 - 2 * pan); });
+      const ai = -24 * pan - 8 * hap, ao = 5 * pan - 6 * hap;
+      bl.setAttribute('x1', 460); bl.setAttribute('y1', 572 + ao); bl.setAttribute('x2', 528); bl.setAttribute('y2', 572 + ai);
+      br.setAttribute('x1', 552); br.setAttribute('y1', 572 + ai); br.setAttribute('x2', 620); br.setAttribute('y2', 572 + ao);
+      if (m < -0.05) {
+        mouth.setAttribute('opacity', 0); mouthO.setAttribute('opacity', 1);
+        mouthO.setAttribute('rx', lerp(14, 26, pan)); mouthO.setAttribute('ry', lerp(6, 30, pan));
+      } else {
+        mouthO.setAttribute('opacity', 0); mouth.setAttribute('opacity', 1);
+        mouth.setAttribute('d', `M498 696 Q540 ${696 + 50 * m} 582 696`);
+      }
+      blushL.setAttribute('opacity', 0.5 * hap); blushR.setAttribute('opacity', 0.5 * hap);
+      const sh = s.shake || 0;
+      sweat.forEach((d, i) => {
+        const ph = ((s.t * 1.6 + i * 0.5) % 1);
+        d.setAttribute('opacity', sh > 0.1 ? (1 - ph) * 0.9 : 0);
+        setT(d, i ? 640 : 440, 540 + ph * 110, 1, 0);
+      });
+      const ox = Math.sin(s.t * 55) * 7 * sh, oy = Math.sin(s.t * 47 + 1) * 4 * sh;
+      const bob = Math.sin(s.t * 2.2) * 3 * (1 - sh);
+      setT(root, ox, oy + bob, 1, 0);
+      setT(head, 0, 0, 1, 0);
+    }
+  };
+}
+
+// ---------- стіл з ноутбуком ----------
+function makeDesk(parent) {
+  const d = g(parent);
+  // рослина
+  rect(d, 160, 1050, 70, 90, 12, '#b45309');
+  [-35, -12, 12, 35].forEach((a, i) => el('ellipse', { cx: 195 + a * 0.6, cy: 1000 - Math.abs(a) * 0.5, rx: 18, ry: 58, fill: i % 2 ? '#16a34a' : '#22c55e',
+    transform: `rotate(${a} ${195} 1060)` }, d));
+  // ноутбук (вигляд ззаду)
+  rect(d, 380, 975, 320, 205, 20, '#cbd5e1', { stroke: '#94a3b8', 'stroke-width': 5 });
+  circle(d, 540, 1078, 16, '#e2e8f0', { stroke: '#94a3b8', 'stroke-width': 4 });
+  rect(d, 355, 1175, 370, 26, 12, '#94a3b8');
+  // стільниця
+  rect(d, 0, 1130, 1080, 270, 0, '#8b5e3c');
+  rect(d, 0, 1130, 1080, 26, 0, '#b07a4f');
+  rect(d, 0, 1394, 1080, 10, 0, '#6b4429');
+  // кружка з олівцями
+  rect(d, 800, 1075, 62, 70, 10, '#e11d48');
+  ['#facc15', '#38bdf8', '#34d399'].forEach((c, i) => el('line', { x1: 815 + i * 16, y1: 1078, x2: 800 + i * 24, y2: 1010, stroke: c, 'stroke-width': 9, 'stroke-linecap': 'round' }, d));
+  return d;
+}
+function makeFloor(parent) { return rect(parent, 0, 1400, 1080, 520, 0, 'url(#gFloor)'); }
+
+// ====================================================================
+// СЦЕНА 1 (0–10 с): проблема, хук
+// ====================================================================
+function buildScene1(root) {
+  rect(root, 0, 0, 1080, 1920, 0, 'url(#gWall)');
+  rect(root, 70, 160, 250, 330, 14, '#dbeafe', { stroke: '#94a3b8', 'stroke-width': 8 });   // вікно
+  rect(root, 70, 322, 250, 8, 0, '#94a3b8'); rect(root, 190, 160, 8, 330, 0, '#94a3b8');
+  makeFloor(root);
+  const alarm = rect(root, 0, 0, 1080, 1920, 0, '#ef4444', { opacity: 0 });
+  // знак оклику
+  const sign = g(root, { opacity: 0 });
+  el('polygon', { points: '540,130 705,420 375,420', fill: '#fff', stroke: '#dc2626', 'stroke-width': 24, 'stroke-linejoin': 'round' }, sign);
+  text(sign, '!', 540, 392, 190, '#dc2626', { 'font-weight': 900 });
+  const ch = makeChar(root);
+  makeDesk(root);
+  // папери
+  const r = rng(7), N = 18, papers = [];
+  const colors = ['#e53935', '#1e88e5', '#fb8c00', '#8e24aa'];
+  for (let i = 0; i < N; i++) {
+    const p = g(root, { opacity: 0 });
+    rect(p, -75, -95, 150, 190, 8, '#fff', { stroke: '#b8c4d6', 'stroke-width': 4 });
+    [-60, -44, 52, 68].forEach((y, k) => rect(p, -52, y, k % 2 ? 70 : 104, 7, 3, '#cbd5e1'));
+    text(p, '?', 0, 28, 130, colors[i % 4], { 'font-weight': 900 });
+    papers.push({ g: p, ts: 0.5 + i * 0.4, dur: 1.0 + r() * 0.5, x0: 90 + r() * 900,
+      tx: 130 + r() * 820, ty: 1105 - i * 6 + (r() - 0.5) * 50, rot0: (r() - 0.5) * 80, rot1: (r() - 0.5) * 60,
+      hit: i % 5 === 1, hx: 500 + r() * 80, sc: 0.9 + r() * 0.25, fl: r() * 6 });
+  }
+  const sub = makeSubtitle(root, ['Знову неповні дані', 'від менеджера?']);
+  return (u) => {
+    // стан героя
+    const head = easeOut(seg(u, 2.4, 3.0));
+    let mood = u < 1 ? 0.3 : u < 2.4 ? lerp(0.3, -0.4, seg(u, 1, 2.4)) : lerp(-0.4, -1, seg(u, 2.4, 3.2));
+    ch.update({ t: u, head, mood, look: [0, u > 0.5 && u < 2.4 ? -8 : 0], shake: seg(u, 3.0, 3.4) });
+    // сигналізація
+    const on = u > 2.4 ? (Math.sin(u * Math.PI * 2 * 2.2) > -0.25 ? 1 : 0.1) : 0;
+    const pop = easeOutBack(seg(u, 2.4, 2.9));
+    sign.setAttribute('opacity', (on * seg(u, 2.4, 2.6)).toFixed(3));
+    setT(sign, 540 * (1 - pop), 420 * (1 - pop), pop, 0);
+    alarm.setAttribute('opacity', (on * 0.2).toFixed(3));
+    // падаючі папери
+    papers.forEach(pp => {
+      if (u < pp.ts) { pp.g.setAttribute('opacity', 0); return; }
+      const p = (u - pp.ts) / pp.dur;
+      let x, y, rot;
+      if (pp.hit && p < 1) {
+        if (p < 0.55) { const q = p / 0.55; x = lerp(pp.x0, pp.hx, q); y = lerp(-250, 520, easeIn(q)); rot = pp.rot0 + q * 30; }
+        else { const q = (p - 0.55) / 0.45; x = lerp(pp.hx, pp.tx, easeOut(q)); y = lerp(520, pp.ty, easeIn(q)); rot = lerp(pp.rot0 + 30, pp.rot1, q); }
+      } else if (p < 1) {
+        const q = Math.pow(p, 1.7);
+        x = lerp(pp.x0, pp.tx, q) + Math.sin(u * 6 + pp.fl) * 22 * (1 - p);
+        y = lerp(-250, pp.ty, q); rot = pp.rot0 + Math.sin(u * 5 + pp.fl) * 18 * (1 - p);
+      } else { x = pp.tx; y = pp.ty; rot = pp.rot1; }
+      pp.g.setAttribute('opacity', 1);
+      setT(pp.g, x, y, pp.sc, rot);
+    });
+    sub(u);
+  };
+}
+
+// ====================================================================
+// СЦЕНА 2 (10–18 с): Google Диск → NotebookLM
+// ====================================================================
+function buildScene2(root) {
+  rect(root, 0, 0, 1080, 1920, 0, 'url(#gBlue)');
+  makeFloor(root).setAttribute('fill', '#b9c9e6');
+  // логотип Диска
+  const logo = g(root);
+  [['#0f9d58', -47.5, 0, -60], ['#fbbc04', 47.5, 0, 60], ['#4285f4', 0, 82, 0]].forEach(([c, x, y, a]) =>
+    rect(logo, -95, -23, 190, 46, 18, c, { transform: `translate(${x} ${y}) rotate(${a})` }));
+  const logoLbl = text(root, 'Google Диск', 540, 490, 46, '#3c4043');
+  // папка
+  const folder = g(root);
+  rect(folder, -115, -90, 100, 46, 14, '#f59e0b');
+  rect(folder, -115, -66, 230, 150, 18, '#f59e0b');
+  const folderFront = rect(folder, -115, -32, 230, 120, 18, '#fbbf24');
+  // стрілки-шеврони
+  const chev = [0, 1, 2, 3].map(() => el('polyline', { points: '-34,-16 0,18 34,-16', fill: 'none', stroke: '#4285f4', 'stroke-width': 14, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, root));
+  // документи
+  const names = ['Виписка_ТОВ_Сонечко', 'Виписка_ФОП', 'Рахунок_101', 'Прайс'];
+  const FOLDER = [540, 650], NOTE = [540, 1180];
+  const docs = names.map((n, i) => {
+    const d = g(root, { opacity: 0 });
+    rect(d, -200, -52, 400, 104, 18, '#fff', { stroke: '#94a3b8', 'stroke-width': 4 });
+    rect(d, -178, -34, 50, 68, 8, '#dbeafe', { stroke: '#3b82f6', 'stroke-width': 4 });
+    [-18, -2, 14].forEach(y => rect(d, -168, y, 30, 5, 2, '#3b82f6'));
+    text(d, n, -112, 9, 27, '#1f2937', { 'text-anchor': 'start' });
+    return { g: d, ts: 1.4 + i * 1.1, dur: 1.3, side: [-1, 1, -0.6, 0.6][i] };
+  });
+  // блокнот
+  const note = g(root);
+  rect(note, -200, -150, 400, 300, 30, 'url(#gNote)');
+  rect(note, 170, -128, 22, 256, 8, '#e2e8f0');
+  for (let i = 0; i < 7; i++) circle(note, -200, -110 + i * 36, 11, '#e2e8f0', { stroke: '#94a3b8', 'stroke-width': 3 });
+  el('polygon', { points: '0,-100 12,-70 42,-58 12,-46 0,-16 -12,-46 -42,-58 -12,-70', fill: '#fde68a' }, note);
+  text(note, 'NotebookLM', 0, 50, 52, '#ffffff');
+  const cnt = text(root, '', 540, 1385, 34, '#334155');
+  const sub = makeSubtitle(root, ['Завантаження документів', 'із Google Диска', 'в NotebookLM']);
+  return (u) => {
+    const pop = easeOutBack(seg(u, 0.0, 0.7));
+    setT(logo, 540, 310, 1.15 * pop, 0);
+    logoLbl.setAttribute('opacity', seg(u, 0.3, 0.8));
+    setT(folder, 540, 650, 1.2 * easeOutBack(seg(u, 0.4, 1.1)), 0);
+    // шеврони
+    chev.forEach((c, i) => {
+      const on = seg(u, 1.2, 1.6) * (1 - seg(u, 6.2, 6.8));
+      const ph = ((u * 0.9 + i / 4) % 1);
+      setT(c, 540, 790 + ph * 220, 1, 0);
+      c.setAttribute('opacity', (on * Math.sin(ph * Math.PI) * 0.8).toFixed(3));
+    });
+    // блокнот: пульс при кожному влученні документа
+    let pulse = 0, arrived = 0;
+    docs.forEach(d => {
+      const end = d.ts + d.dur;
+      if (u >= end) arrived++;
+      if (u >= end && u < end + 0.45) pulse = Math.max(pulse, Math.sin(seg(u, end, end + 0.45) * Math.PI));
+    });
+    setT(note, NOTE[0], NOTE[1] + Math.sin(u * 2) * 4, easeOutBack(seg(u, 0.7, 1.4)) * (1 + 0.07 * pulse), 0);
+    cnt.textContent = u > 1.4 ? `Завантажено файлів: ${arrived} / 4` : '';
+    // документи
+    docs.forEach(d => {
+      if (u < d.ts) { d.g.setAttribute('opacity', 0); return; }
+      const p = clamp((u - d.ts) / d.dur);
+      let x, y, s;
+      const hover = [540 + d.side * 150, 800];
+      if (p < 0.38) { const q = easeOut(p / 0.38); x = lerp(FOLDER[0], hover[0], q); y = lerp(FOLDER[1], hover[1], q); s = lerp(0.25, 1, q); }
+      else { const q = easeInOut((p - 0.38) / 0.62); [x, y] = bez(hover, [hover[0] + d.side * 140, 1000], [NOTE[0], NOTE[1] - 40], q); s = lerp(1, 0.3, q); }
+      d.g.setAttribute('opacity', p >= 1 ? 0 : (p > 0.9 ? (1 - p) * 10 : 1));
+      setT(d.g, x, y, s, d.side * 6 * Math.sin(p * Math.PI));
+    });
+    sub(u);
+  };
+}
+
+// ====================================================================
+// СЦЕНА 3 (18–38 с): ШІ аналізує та знаходить дефіцит
+// ====================================================================
+function buildScene3(root) {
+  rect(root, 0, 0, 1080, 1920, 0, 'url(#gCard)');
+  makeFloor(root).setAttribute('fill', '#b6c4e4');
+  const card = g(root);
+  rect(card, 90, 170, 900, 850, 36, '#fff', { stroke: '#c3cde6', 'stroke-width': 5 });
+  rect(card, 90, 170, 900, 90, 36, '#4f46e5'); rect(card, 90, 220, 900, 40, 0, '#4f46e5');
+  text(card, 'NotebookLM', 140, 232, 40, '#fff', { 'text-anchor': 'start' });
+  // джерела
+  const names = ['Виписка_ТОВ_Сонечко', 'Виписка_ФОП', 'Рахунок_101', 'Прайс'];
+  const chips = names.map((n, i) => {
+    const x = 120 + (i % 2) * 400, y = 285 + Math.floor(i / 2) * 66;
+    const bg = rect(card, x, y, 380, 52, 26, '#eef2ff', { stroke: '#a5b4fc', 'stroke-width': 3 });
+    text(card, n, x + 24, y + 35, 24, '#312e81', { 'text-anchor': 'start' });
+    const ok = el('polyline', { points: `${x + 335},${y + 27} ${x + 347},${y + 39} ${x + 365},${y + 15}`, fill: 'none', stroke: '#16a34a', 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0 }, card);
+    return { bg, ok };
+  });
+  // сканувальна лінія
+  const scan = rect(card, 100, 0, 880, 8, 4, '#22d3ee', { opacity: 0 });
+  // блок «Є»
+  const yesG = g(card, { opacity: 0 });
+  circle(yesG, 140, 478, 24, '#22c55e');
+  el('polyline', { points: '128,478 137,488 153,466', fill: 'none', stroke: '#fff', 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, yesG);
+  text(yesG, 'Є:', 182, 494, 46, '#15803d', { 'text-anchor': 'start' });
+  const yes = [
+    text(card, '', 150, 560, 38, '#1f2937', { 'text-anchor': 'start' }),
+    text(card, '', 150, 622, 38, '#1f2937', { 'text-anchor': 'start' }),
+    text(card, '', 150, 684, 38, '#1f2937', { 'text-anchor': 'start' }),
+    text(card, '', 150, 726, 30, '#475569', { 'text-anchor': 'start', 'font-weight': 400 })
+  ];
+  const yesTxt = ['• ТОВ "СОНЕЧКО"', '• ФОП Безіменний', '• 3 велосипеди', '(собівартість 1 грн, ціна 2 грн)'];
+  // блок «Бракує»
+  const noG = g(card, { opacity: 0 });
+  const noBg = rect(noG, 110, 770, 860, 215, 26, '#fee2e2');
+  circle(noG, 140, 820, 24, '#ef4444');
+  el('path', { d: 'M129 809 L151 831 M151 809 L129 831', stroke: '#fff', 'stroke-width': 7, 'stroke-linecap': 'round' }, noG);
+  text(noG, 'Бракує:', 182, 836, 46, '#b91c1c', { 'text-anchor': 'start' });
+  const no = [
+    text(card, '', 150, 902, 38, '#7f1d1d', { 'text-anchor': 'start' }),
+    text(card, '', 150, 964, 38, '#7f1d1d', { 'text-anchor': 'start' })
+  ];
+  const noTxt = ['• Договір постачання', '• реквізити ПДВ ФОП'];
+  // робот
+  const beam = el('polygon', { points: '450,1228 140,1020 760,1020', fill: 'url(#gBeam)', opacity: 0 }, root);
+  const robot = g(root);
+  el('ellipse', { cx: 0, cy: 165, rx: 90, ry: 16, fill: 'rgba(15,23,42,0.18)' }, robot);
+  rect(robot, -70, 10, 140, 135, 38, '#e2e8f0', { stroke: '#64748b', 'stroke-width': 6 });
+  const chest = circle(robot, 0, 78, 20, '#22d3ee');
+  el('line', { x1: -70, y1: 55, x2: -115, y2: 100, stroke: '#64748b', 'stroke-width': 20, 'stroke-linecap': 'round' }, robot);
+  el('line', { x1: 70, y1: 55, x2: 130, y2: 18, stroke: '#64748b', 'stroke-width': 20, 'stroke-linecap': 'round' }, robot);
+  rect(robot, 120, -20, 60, 34, 10, '#334155', { transform: 'rotate(-30 150 -3)' });
+  circle(robot, 150, -5, 14, '#22d3ee');
+  el('line', { x1: 0, y1: -130, x2: 0, y2: -168, stroke: '#64748b', 'stroke-width': 8 }, robot);
+  const ant = circle(robot, 0, -176, 13, '#f43f5e');
+  rect(robot, -96, -130, 192, 136, 46, '#f1f5f9', { stroke: '#64748b', 'stroke-width': 6 });
+  rect(robot, -74, -104, 148, 76, 32, '#0f172a');
+  const eL = circle(robot, -32, -66, 15, '#22d3ee'), eR = circle(robot, 32, -66, 15, '#22d3ee');
+  // кільце прогресу
+  const ringG = g(root);
+  circle(ringG, 0, 0, 72, 'none', { stroke: '#cbd5e1', 'stroke-width': 16 });
+  const ring = circle(ringG, 0, 0, 72, 'none', { stroke: '#4f46e5', 'stroke-width': 16, 'stroke-linecap': 'round', 'stroke-dasharray': '0 1000', transform: 'rotate(-90)' });
+  const pct = text(ringG, '0%', 0, 14, 40, '#1e1b4b');
+  text(ringG, 'аналіз даних', 0, 118, 26, '#475569', { 'font-weight': 400 });
+  const sub = makeSubtitle(root, ['ШІ аналізує та знаходить', 'дефіцит даних']);
+  const C = 2 * Math.PI * 72;
+  return (u) => {
+    const appear = easeOut(seg(u, 0, 0.7));
+    setT(card, 540 * (1 - appear), 0, 1, 0); card.setAttribute('opacity', appear);
+    const rob = easeOutBack(seg(u, 0.5, 1.3));
+    setT(robot, 300, 1235 + Math.sin(u * 2.4) * 10, rob, 0);
+    setT(ringG, 800, 1235, rob, 0);
+    const scanning = u > 1.2 && u < 8.0;
+    // очі сканують
+    const sx = scanning ? Math.sin(u * 3) * 16 : 0;
+    eL.setAttribute('cx', -32 + sx); eR.setAttribute('cx', 32 + sx);
+    ant.setAttribute('fill', Math.sin(u * 8) > 0 ? '#f43f5e' : '#fda4af');
+    chest.setAttribute('opacity', 0.6 + 0.4 * Math.sin(u * 6));
+    beam.setAttribute('opacity', scanning ? 0.55 + 0.25 * Math.sin(u * 7) : 0);
+    // сканувальна лінія по картці
+    if (scanning) {
+      const sp = ((u - 1.2) % 2.2) / 2.2;
+      scan.setAttribute('opacity', 0.85); scan.setAttribute('y', 280 + sp * 700);
+    } else scan.setAttribute('opacity', 0);
+    chips.forEach((c, i) => {
+      const done = u > 1.6 + i * 1.5;
+      c.bg.setAttribute('fill', done ? '#dcfce7' : '#eef2ff');
+      c.bg.setAttribute('stroke', done ? '#4ade80' : '#a5b4fc');
+      c.ok.setAttribute('opacity', done ? 1 : 0);
+    });
+    // прогрес
+    const pr = easeInOut(seg(u, 1.2, 8.0));
+    ring.setAttribute('stroke-dasharray', `${(C * pr).toFixed(2)} 1000`);
+    ring.setAttribute('stroke', pr >= 1 ? '#16a34a' : '#4f46e5');
+    pct.textContent = pr >= 1 ? '100%' : Math.round(pr * 100) + '%';
+    // «Є»
+    yesG.setAttribute('opacity', seg(u, 8.2, 8.7));
+    setT(yesG, 0, 0, 1, 0);
+    const ys = [8.8, 10.2, 11.6, 13.4];
+    yes.forEach((t, i) => t.textContent = typed(yesTxt[i], u, ys[i], 26));
+    // «Бракує»
+    const nIn = seg(u, 14.8, 15.3);
+    noG.setAttribute('opacity', nIn);
+    const shake = u > 14.8 && u < 15.8 ? Math.sin(u * 60) * 6 * (1 - seg(u, 14.8, 15.8)) : 0;
+    setT(noG, shake, 0, 1, 0);
+    noBg.setAttribute('opacity', (0.55 + 0.45 * Math.sin(u * 7)).toFixed(3));
+    no.forEach((t, i) => t.textContent = typed(noTxt[i], u, 15.6 + i * 1.1, 28));
+    sub(u);
+  };
+}
+
+// ====================================================================
+// СЦЕНА 4 (38–50 с): готове ТЗ
+// ====================================================================
+function buildScene4(root) {
+  rect(root, 0, 0, 1080, 1920, 0, 'url(#gMint)');
+  makeFloor(root).setAttribute('fill', '#9fcdb4');
+  const wrap = g(root);                          // персонаж зменшений до 0.72
+  const S = 0.72;
+  wrap.setAttribute('transform', `translate(${540 * (1 - S)} ${1400 * (1 - S)}) scale(${S})`);
+  const ch = makeChar(wrap);
+  makeDesk(wrap);
+  // документ ТЗ
+  const doc = g(root, { opacity: 0 });
+  rect(doc, -200, -250, 400, 500, 26, '#fff', { stroke: '#a5b4fc', 'stroke-width': 5 });
+  rect(doc, -200, -250, 400, 110, 26, '#4f46e5'); rect(doc, -200, -190, 400, 50, 0, '#4f46e5');
+  text(doc, 'Технічне завдання', 0, -192, 38, '#fff');
+  text(doc, 'для менеджера', 0, -152, 32, '#c7d2fe', { 'font-weight': 400 });
+  const rows = [0, 1, 2, 3, 4].map(i => {
+    const y = -95 + i * 62;
+    const c = circle(doc, -160, y, 17, '#e2e8f0');
+    const tick = el('polyline', { points: `-169,${y} -162,${y + 8} -150,${y - 9}`, fill: 'none', stroke: '#fff', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0 }, doc);
+    const bar = rect(doc, -125, y - 9, 10, 18, 9, '#cbd5e1');
+    return { c, tick, bar, w: [270, 220, 285, 190, 245][i] };
+  });
+  const stamp = g(doc);
+  circle(stamp, 0, 0, 74, '#22c55e', { stroke: '#fff', 'stroke-width': 8 });
+  el('polyline', { points: '-34,2 -10,28 36,-26', fill: 'none', stroke: '#fff', 'stroke-width': 16, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, stamp);
+  // чат менеджера
+  const chat = g(root, { opacity: 0 });
+  rect(chat, -190, -145, 380, 290, 28, '#fff', { stroke: '#86efac', 'stroke-width': 5 });
+  rect(chat, -190, -145, 380, 74, 28, '#22c55e'); rect(chat, -190, -100, 380, 29, 0, '#22c55e');
+  circle(chat, -140, -108, 24, '#fff'); text(chat, 'М', -140, -98, 30, '#16a34a');
+  text(chat, 'Менеджер', -98, -96, 32, '#fff', { 'text-anchor': 'start' });
+  const dots = [0, 1, 2].map(i => circle(chat, -30 + i * 30, 30, 9, '#94a3b8'));
+  const msg = g(chat, { opacity: 0 });
+  rect(msg, -160, -30, 320, 100, 24, '#dcfce7', { stroke: '#86efac', 'stroke-width': 3 });
+  rect(msg, -138, -10, 38, 54, 6, '#fff', { stroke: '#16a34a', 'stroke-width': 3 });
+  text(msg, 'ТЗ готове', -85, 25, 32, '#14532d', { 'text-anchor': 'start' });
+  [[110, 52], [124, 52]].forEach(([x, y]) => el('polyline', { points: `${x - 8},${y} ${x - 3},${y + 7} ${x + 7},${y - 6}`, fill: 'none', stroke: '#2563eb', 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, msg));
+  // конфеті
+  const r = rng(21), conf = [];
+  for (let i = 0; i < 34; i++) conf.push({ e: rect(root, -8, -8, 16, 16, 3, ['#f43f5e', '#f59e0b', '#22c55e', '#3b82f6', '#a855f7'][i % 5], { opacity: 0 }),
+    a: r() * Math.PI * 2, v: 250 + r() * 380, rot: (r() - 0.5) * 900 });
+  const sub = makeSubtitle(root, ['Ідеальне ТЗ без рутини', 'та помилок!']);
+  const DOC = [330, 410], CHAT = [850, 340];
+  return (u) => {
+    const dIn = easeOutBack(seg(u, 0.4, 1.2));
+    // політ документа в чат
+    const fp = seg(u, 6.6, 8.2);
+    let x = DOC[0], y = DOC[1], s = dIn, rot = 0;
+    if (fp > 0) {
+      const q = easeInOut(fp);
+      [x, y] = bez(DOC, [600, 90], [CHAT[0] + 20, CHAT[1] + 10], q);
+      s = lerp(1, 0.22, easeIn(q)); rot = lerp(0, 25, q);
+    }
+    doc.setAttribute('opacity', fp >= 1 ? 0 : seg(u, 0.4, 0.7));
+    setT(doc, x, y, s, rot);
+    rows.forEach((rw, i) => {
+      const p = seg(u, 1.4 + i * 0.45, 2.2 + i * 0.45);
+      rw.bar.setAttribute('width', 10 + (rw.w - 10) * easeOut(p));
+      const ok = u > 2.4 + i * 0.45;
+      rw.c.setAttribute('fill', ok ? '#22c55e' : '#e2e8f0');
+      rw.tick.setAttribute('opacity', ok ? 1 : 0);
+    });
+    setT(stamp, 110, 160, easeOutBack(seg(u, 4.2, 4.9)), 0);
+    stamp.setAttribute('opacity', seg(u, 4.2, 4.4));
+    // чат
+    const cIn = easeOutBack(seg(u, 5.6, 6.4));
+    chat.setAttribute('opacity', seg(u, 5.6, 5.9));
+    setT(chat, CHAT[0], CHAT[1], cIn, 0);
+    const arrived = u >= 8.2;
+    dots.forEach((d, i) => d.setAttribute('opacity', arrived ? 0 : 0.35 + 0.65 * Math.max(0, Math.sin(u * 7 - i * 0.9))));
+    msg.setAttribute('opacity', arrived ? easeOut(seg(u, 8.2, 8.6)) : 0);
+    // конфеті
+    conf.forEach(c => {
+      const t = u - 8.3;
+      if (t < 0 || t > 1.8) { c.e.setAttribute('opacity', 0); return; }
+      const px = CHAT[0] + Math.cos(c.a) * c.v * t, py = CHAT[1] + Math.sin(c.a) * c.v * t + 420 * t * t;
+      c.e.setAttribute('opacity', (1 - seg(t, 1.1, 1.8)).toFixed(3));
+      setT(c.e, px, py, 1, c.rot * t);
+    });
+    // герой: усміхається
+    const smile = easeOut(seg(u, 0.4, 1.4));
+    ch.update({ t: u, mood: smile, look: [-6, -4], shake: 0 });
+    sub(u);
+  };
+}
+
+// ====================================================================
+// СЦЕНА 5 (50–60 с): заклик до дії
+// ====================================================================
+function buildScene5(root) {
+  rect(root, 0, 0, 1080, 1920, 0, 'url(#gViolet)');
+  makeFloor(root).setAttribute('fill', '#a9abd8');
+  const wrap = g(root);
+  const S = 0.85;
+  wrap.setAttribute('transform', `translate(${540 * (1 - S)} ${1400 * (1 - S)}) scale(${S})`);
+  const ch = makeChar(wrap);
+  makeDesk(wrap);
+  // плашка блогу
+  const plaque = g(root);
+  rect(plaque, -440, -52, 880, 104, 52, '#312e81');
+  text(plaque, 'Автоматизація бухгалтерії з ШІ', 0, 16, 46, '#fff');
+  // кнопка «Підписатися»
+  const btn = g(root);
+  rect(btn, -270, -68, 540, 136, 68, '#dc2626', { stroke: '#fff', 'stroke-width': 8 });
+  text(btn, 'Підписатися', -30, 20, 58, '#fff');
+  const bell = g(btn);
+  el('path', { d: 'M-12 -22 Q-12 -46 12 -46 Q36 -46 36 -22 L36 8 L46 22 L-22 22 L-12 8Z', fill: '#fff' }, bell);
+  circle(bell, 12, 34, 8, '#fff');
+  setT(bell, 205, 0, 1, 0);
+  // курсор
+  const cursor = el('polygon', { points: '0,0 0,70 20,54 34,86 50,80 36,48 62,48', fill: '#111827', stroke: '#fff', 'stroke-width': 5, 'stroke-linejoin': 'round' }, root);
+  // серця
+  const hearts = [];
+  for (let i = 0; i < 9; i++) hearts.push(el('path', { d: 'M0 14 C-26 -8 -14 -30 0 -16 C14 -30 26 -8 0 14Z', fill: ['#f43f5e', '#ec4899', '#f97316'][i % 3], opacity: 0 }, root));
+  const r = rng(5), hp = hearts.map(() => ({ x: 300 + r() * 480, off: r() * 3 }));
+  const sub = makeSubtitle(root, ['Підписуйтесь!', 'Автоматизація', 'бухгалтерії з ШІ']);
+  return (u) => {
+    setT(plaque, 540, 210, easeOutBack(seg(u, 0.1, 0.8)), 0);
+    const bPulse = 1 + 0.035 * Math.sin(u * 5);
+    const click = u > 2.9 && u < 3.2 ? 0.92 : 1;
+    setT(btn, 540, 410, easeOutBack(seg(u, 0.5, 1.2)) * bPulse * click, 0);
+    // дзвіночок гойдається
+    setT(bell, 205, 0, 1, u > 3.0 ? Math.sin(u * 22) * 18 * Math.exp(-(u - 3.0) * 1.3) : 0);
+    // курсор рухається до кнопки і клікає
+    const cq = easeInOut(seg(u, 1.4, 2.8));
+    setT(cursor, lerp(860, 600, cq), lerp(760, 420, cq), 1, 0);
+    cursor.setAttribute('opacity', seg(u, 1.4, 1.7));
+    // серця летять угору
+    hearts.forEach((h, i) => {
+      const t = u - (3.2 + i * 0.5);
+      if (t < 0) { h.setAttribute('opacity', 0); return; }
+      const p = (t % 3.5) / 3.5;
+      h.setAttribute('opacity', (Math.sin(p * Math.PI) * 0.9).toFixed(3));
+      setT(h, hp[i].x + Math.sin(t * 3 + hp[i].off) * 30, 1000 - p * 520, 1.1 + 0.4 * Math.sin(p * Math.PI), 0);
+    });
+    // герой п'є каву
+    ch.update({ t: u, coffee: easeOut(seg(u, 0.2, 1.0)), sip: 0.5 + 0.5 * Math.sin(u * 2.2), mood: 0.9, look: [4, 0], shake: 0 });
+    sub(u);
+  };
+}
+
+// ---------- збірка ----------
+const SCENES = [
+  { start: 0, end: 10, build: buildScene1 },
+  { start: 10, end: 18, build: buildScene2 },
+  { start: 18, end: 38, build: buildScene3 },
+  { start: 38, end: 50, build: buildScene4 },
+  { start: 50, end: 60, build: buildScene5 }
+];
+rect(svg, 0, 0, 1080, 1920, 0, '#000');
+SCENES.forEach(s => { s.root = g(svg); s.update = s.build(s.root); });
+
+window.renderAt = function (t) {
+  SCENES.forEach(s => {
+    const a = clamp((t - (s.start - 0.3)) / 0.3);
+    const visible = t >= s.start - 0.3 && t < s.end && a > 0;
+    s.root.setAttribute('display', visible ? 'inline' : 'none');
+    if (visible) {
+      s.root.setAttribute('opacity', a.toFixed(3));
+      s.update(Math.max(0, t - s.start));
+    }
+  });
+};
+window.renderAt(0);
+</script>
+</body>
+</html>
