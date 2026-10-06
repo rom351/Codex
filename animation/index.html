@@ -358,13 +358,20 @@ function buildScene3(root) {
   text(card, 'NotebookLM', 140, 232, 40, '#fff', { 'text-anchor': 'start' });
   // джерела
   const names = ['Виписка_ТОВ_Сонечко', 'Виписка_ФОП', 'Рахунок_101', 'Прайс'];
+  const counter = text(card, 'Джерел: 4', 950, 230, 28, '#e0e7ff', { 'text-anchor': 'end', 'font-weight': 400 });
   const chips = names.map((n, i) => {
     const x = 120 + (i % 2) * 400, y = 285 + Math.floor(i / 2) * 66;
     const bg = rect(card, x, y, 380, 52, 26, '#eef2ff', { stroke: '#a5b4fc', 'stroke-width': 3 });
-    text(card, n, x + 24, y + 35, 24, '#312e81', { 'text-anchor': 'start' });
-    const ok = el('polyline', { points: `${x + 335},${y + 27} ${x + 347},${y + 39} ${x + 365},${y + 15}`, fill: 'none', stroke: '#16a34a', 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0 }, card);
-    return { bg, ok };
+    // чекбокс джерела (як у NotebookLM): знята галочка = джерело виключене
+    const box = rect(card, x + 18, y + 13, 26, 26, 7, '#4f46e5', { stroke: '#4f46e5', 'stroke-width': 3 });
+    const boxTick = el('polyline', { points: `${x + 24},${y + 27} ${x + 29},${y + 33} ${x + 39},${y + 20}`, fill: 'none', stroke: '#fff', 'stroke-width': 5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, card);
+    const label = text(card, n, x + 58, y + 35, 24, '#312e81', { 'text-anchor': 'start' });
+    const ok = el('polyline', { points: `${x + 352},${y + 27} ${x + 359},${y + 35} ${x + 371},${y + 19}`, fill: 'none', stroke: '#16a34a', 'stroke-width': 5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0 }, card);
+    const badge = text(card, 'виключено', x + 364, y + 34, 22, '#ea580c', { 'text-anchor': 'end', opacity: 0 });
+    return { bg, box, boxTick, label, ok, badge };
   });
+  const EXCLUDED = 1;                         // Виписка_ФОП виключаємо перед аналізом
+  const SCANNED_AT = [1.8, null, 3.3, 4.8];   // коли ШІ «прочитав» джерело
   // сканувальна лінія
   const scan = rect(card, 100, 0, 880, 8, 4, '#22d3ee', { opacity: 0 });
   // блок «Є»
@@ -431,10 +438,18 @@ function buildScene3(root) {
       const sp = ((u - 1.2) % 2.2) / 2.2;
       scan.setAttribute('opacity', 0.85); scan.setAttribute('y', 280 + sp * 700);
     } else scan.setAttribute('opacity', 0);
+    counter.textContent = u > 1.2 ? 'Джерел: 3 з 4' : 'Джерел: 4';
     chips.forEach((c, i) => {
-      const done = u > 1.6 + i * 1.5;
-      c.bg.setAttribute('fill', done ? '#dcfce7' : '#eef2ff');
-      c.bg.setAttribute('stroke', done ? '#4ade80' : '#a5b4fc');
+      const excl = i === EXCLUDED && u > 1.2;     // галочку знято
+      const done = SCANNED_AT[i] != null && u > SCANNED_AT[i];
+      const flash = i === EXCLUDED && u > 1.2 && u < 1.7;
+      c.bg.setAttribute('fill', excl ? (flash ? '#fed7aa' : '#f1f5f9') : done ? '#dcfce7' : '#eef2ff');
+      c.bg.setAttribute('stroke', excl ? '#cbd5e1' : done ? '#4ade80' : '#a5b4fc');
+      c.box.setAttribute('fill', excl ? '#fff' : '#4f46e5');
+      c.box.setAttribute('stroke', excl ? '#94a3b8' : '#4f46e5');
+      c.boxTick.setAttribute('opacity', excl ? 0 : 1);
+      c.label.setAttribute('fill', excl ? '#94a3b8' : '#312e81');
+      c.badge.setAttribute('opacity', excl ? 1 : 0);
       c.ok.setAttribute('opacity', done ? 1 : 0);
     });
     // прогрес
