@@ -1,4 +1,4 @@
-// Рендер анімації в MP4 (30 кадров/с, 1080x1920, 60 с) покадрово через Chromium + ffmpeg.
+// Рендер анімації в MP4 (30 кадров/с, 1080x1920, 56 с) покадрово через Chromium + ffmpeg.
 //
 // Использование (нужен пакет playwright-core и ffmpeg):
 //   node render.js video.mp4              — полный ролик
@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const FPS = 30;
-const DURATION = 60;
+const DURATION = 56;
 const CHROME = process.env.CHROME_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 
 (async () => {

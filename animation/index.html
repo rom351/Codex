@@ -12,7 +12,7 @@
 <svg id="stage" xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
 <script>
 // ====================================================================
-// Анімаційний ролик 60 с (1080x1920, вертикальний формат).
+// Анімаційний ролик 56 с (1080x1920, вертикальний формат).
 // Вся анімація — функція від часу: window.renderAt(t), t в секундах.
 // Це дозволяє рендерити кадри детерміновано (див. render.js).
 // ====================================================================
@@ -236,20 +236,20 @@ function buildScene1(root) {
     rect(p, -75, -95, 150, 190, 8, '#fff', { stroke: '#b8c4d6', 'stroke-width': 4 });
     [-60, -44, 52, 68].forEach((y, k) => rect(p, -52, y, k % 2 ? 70 : 104, 7, 3, '#cbd5e1'));
     text(p, '?', 0, 28, 130, colors[i % 4], { 'font-weight': 900 });
-    papers.push({ g: p, ts: 0.5 + i * 0.4, dur: 1.0 + r() * 0.5, x0: 90 + r() * 900,
+    papers.push({ g: p, ts: 0.7 + i * 0.33, dur: 1.0 + r() * 0.5, x0: 90 + r() * 900,
       tx: 130 + r() * 820, ty: 1105 - i * 6 + (r() - 0.5) * 50, rot0: (r() - 0.5) * 80, rot1: (r() - 0.5) * 60,
       hit: i % 5 === 1, hx: 500 + r() * 80, sc: 0.9 + r() * 0.25, fl: r() * 6 });
   }
   const sub = makeSubtitle(root, ['Знову неповні дані', 'від менеджера?']);
   return (u) => {
     // стан героя
-    const head = easeOut(seg(u, 2.4, 3.0));
-    let mood = u < 1 ? 0.3 : u < 2.4 ? lerp(0.3, -0.4, seg(u, 1, 2.4)) : lerp(-0.4, -1, seg(u, 2.4, 3.2));
-    ch.update({ t: u, head, mood, look: [0, u > 0.5 && u < 2.4 ? -8 : 0], shake: seg(u, 3.0, 3.4) });
+    const head = easeOut(seg(u, 2.7, 3.3));
+    let mood = u < 1 ? 0.3 : u < 2.7 ? lerp(0.3, -0.4, seg(u, 1, 2.7)) : lerp(-0.4, -1, seg(u, 2.7, 3.5));
+    ch.update({ t: u, head, mood, look: [0, u > 0.5 && u < 2.7 ? -8 : 0], shake: seg(u, 3.3, 3.7) });
     // сигналізація
-    const on = u > 2.4 ? (Math.sin(u * Math.PI * 2 * 2.2) > -0.25 ? 1 : 0.1) : 0;
-    const pop = easeOutBack(seg(u, 2.4, 2.9));
-    sign.setAttribute('opacity', (on * seg(u, 2.4, 2.6)).toFixed(3));
+    const on = u > 2.7 ? (Math.sin(u * Math.PI * 2 * 2.2) > -0.25 ? 1 : 0.1) : 0;
+    const pop = easeOutBack(seg(u, 2.7, 3.2));
+    sign.setAttribute('opacity', (on * seg(u, 2.7, 2.9)).toFixed(3));
     setT(sign, 540 * (1 - pop), 420 * (1 - pop), pop, 0);
     alarm.setAttribute('opacity', (on * 0.2).toFixed(3));
     // падаючі папери
@@ -299,7 +299,7 @@ function buildScene2(root) {
     rect(d, -178, -34, 50, 68, 8, '#dbeafe', { stroke: '#3b82f6', 'stroke-width': 4 });
     [-18, -2, 14].forEach(y => rect(d, -168, y, 30, 5, 2, '#3b82f6'));
     text(d, n, -112, 9, 27, '#1f2937', { 'text-anchor': 'start' });
-    return { g: d, ts: 1.4 + i * 1.1, dur: 1.3, side: [-1, 1, -0.6, 0.6][i] };
+    return { g: d, ts: 1.2 + i * 1.2, dur: 1.3, side: [-1, 1, -0.6, 0.6][i] };
   });
   // блокнот
   const note = g(root);
@@ -371,7 +371,7 @@ function buildScene3(root) {
     return { bg, box, boxTick, label, ok, badge };
   });
   const EXCLUDED = 1;                         // Виписка_ФОП виключаємо перед аналізом
-  const SCANNED_AT = [1.8, null, 3.3, 4.8];   // коли ШІ «прочитав» джерело
+  const SCANNED_AT = [2.6, null, 4.0, 5.4];   // коли ШІ «прочитав» джерело
   // сканувальна лінія
   const scan = rect(card, 100, 0, 880, 8, 4, '#22d3ee', { opacity: 0 });
   // блок «Є»
@@ -426,7 +426,7 @@ function buildScene3(root) {
     const rob = easeOutBack(seg(u, 0.5, 1.3));
     setT(robot, 300, 1235 + Math.sin(u * 2.4) * 10, rob, 0);
     setT(ringG, 800, 1235, rob, 0);
-    const scanning = u > 1.2 && u < 8.0;
+    const scanning = u > 1.4 && u < 6.2;
     // очі сканують
     const sx = scanning ? Math.sin(u * 3) * 16 : 0;
     eL.setAttribute('cx', -32 + sx); eR.setAttribute('cx', 32 + sx);
@@ -435,7 +435,7 @@ function buildScene3(root) {
     beam.setAttribute('opacity', scanning ? 0.55 + 0.25 * Math.sin(u * 7) : 0);
     // сканувальна лінія по картці
     if (scanning) {
-      const sp = ((u - 1.2) % 2.2) / 2.2;
+      const sp = ((u - 1.4) % 1.6) / 1.6;
       scan.setAttribute('opacity', 0.85); scan.setAttribute('y', 280 + sp * 700);
     } else scan.setAttribute('opacity', 0);
     counter.textContent = u > 1.2 ? 'Джерел: 3 з 4' : 'Джерел: 4';
@@ -453,22 +453,22 @@ function buildScene3(root) {
       c.ok.setAttribute('opacity', done ? 1 : 0);
     });
     // прогрес
-    const pr = easeInOut(seg(u, 1.2, 8.0));
+    const pr = easeInOut(seg(u, 1.4, 6.2));
     ring.setAttribute('stroke-dasharray', `${(C * pr).toFixed(2)} 1000`);
     ring.setAttribute('stroke', pr >= 1 ? '#16a34a' : '#4f46e5');
     pct.textContent = pr >= 1 ? '100%' : Math.round(pr * 100) + '%';
     // «Є»
-    yesG.setAttribute('opacity', seg(u, 8.2, 8.7));
+    yesG.setAttribute('opacity', seg(u, 6.2, 6.6));
     setT(yesG, 0, 0, 1, 0);
-    const ys = [8.8, 10.2, 11.6, 13.4];
-    yes.forEach((t, i) => t.textContent = typed(yesTxt[i], u, ys[i], 26));
+    const ys = [6.5, 7.0, 7.5, 8.0];
+    yes.forEach((t, i) => t.textContent = typed(yesTxt[i], u, ys[i], 34));
     // «Бракує»
-    const nIn = seg(u, 14.8, 15.3);
+    const nIn = seg(u, 9.0, 9.5);
     noG.setAttribute('opacity', nIn);
-    const shake = u > 14.8 && u < 15.8 ? Math.sin(u * 60) * 6 * (1 - seg(u, 14.8, 15.8)) : 0;
+    const shake = u > 9.0 && u < 10.0 ? Math.sin(u * 60) * 6 * (1 - seg(u, 9.0, 10.0)) : 0;
     setT(noG, shake, 0, 1, 0);
     noBg.setAttribute('opacity', (0.55 + 0.45 * Math.sin(u * 7)).toFixed(3));
-    no.forEach((t, i) => t.textContent = typed(noTxt[i], u, 15.6 + i * 1.1, 28));
+    no.forEach((t, i) => t.textContent = typed(noTxt[i], u, 9.7 + i * 1.1, 28));
     sub(u);
   };
 }
@@ -519,36 +519,36 @@ function buildScene4(root) {
   const sub = makeSubtitle(root, ['Ідеальне ТЗ без рутини', 'та помилок!']);
   const DOC = [330, 410], CHAT = [850, 340];
   return (u) => {
-    const dIn = easeOutBack(seg(u, 0.4, 1.2));
+    const dIn = easeOutBack(seg(u, 0.3, 1.0));
     // політ документа в чат
-    const fp = seg(u, 6.6, 8.2);
+    const fp = seg(u, 5.2, 6.6);
     let x = DOC[0], y = DOC[1], s = dIn, rot = 0;
     if (fp > 0) {
       const q = easeInOut(fp);
       [x, y] = bez(DOC, [600, 90], [CHAT[0] + 20, CHAT[1] + 10], q);
       s = lerp(1, 0.22, easeIn(q)); rot = lerp(0, 25, q);
     }
-    doc.setAttribute('opacity', fp >= 1 ? 0 : seg(u, 0.4, 0.7));
+    doc.setAttribute('opacity', fp >= 1 ? 0 : seg(u, 0.3, 0.6));
     setT(doc, x, y, s, rot);
     rows.forEach((rw, i) => {
-      const p = seg(u, 1.4 + i * 0.45, 2.2 + i * 0.45);
+      const p = seg(u, 1.0 + i * 0.35, 1.7 + i * 0.35);
       rw.bar.setAttribute('width', 10 + (rw.w - 10) * easeOut(p));
-      const ok = u > 2.4 + i * 0.45;
+      const ok = u > 1.8 + i * 0.35;
       rw.c.setAttribute('fill', ok ? '#22c55e' : '#e2e8f0');
       rw.tick.setAttribute('opacity', ok ? 1 : 0);
     });
-    setT(stamp, 110, 160, easeOutBack(seg(u, 4.2, 4.9)), 0);
-    stamp.setAttribute('opacity', seg(u, 4.2, 4.4));
+    setT(stamp, 110, 160, easeOutBack(seg(u, 3.4, 4.0)), 0);
+    stamp.setAttribute('opacity', seg(u, 3.4, 3.6));
     // чат
-    const cIn = easeOutBack(seg(u, 5.6, 6.4));
-    chat.setAttribute('opacity', seg(u, 5.6, 5.9));
+    const cIn = easeOutBack(seg(u, 4.3, 5.0));
+    chat.setAttribute('opacity', seg(u, 4.3, 4.6));
     setT(chat, CHAT[0], CHAT[1], cIn, 0);
-    const arrived = u >= 8.2;
+    const arrived = u >= 6.6;
     dots.forEach((d, i) => d.setAttribute('opacity', arrived ? 0 : 0.35 + 0.65 * Math.max(0, Math.sin(u * 7 - i * 0.9))));
-    msg.setAttribute('opacity', arrived ? easeOut(seg(u, 8.2, 8.6)) : 0);
+    msg.setAttribute('opacity', arrived ? easeOut(seg(u, 6.6, 7.0)) : 0);
     // конфеті
     conf.forEach(c => {
-      const t = u - 8.3;
+      const t = u - 6.7;
       if (t < 0 || t > 1.8) { c.e.setAttribute('opacity', 0); return; }
       const px = CHAT[0] + Math.cos(c.a) * c.v * t, py = CHAT[1] + Math.sin(c.a) * c.v * t + 420 * t * t;
       c.e.setAttribute('opacity', (1 - seg(t, 1.1, 1.8)).toFixed(3));
@@ -594,17 +594,17 @@ function buildScene5(root) {
   return (u) => {
     setT(plaque, 540, 210, easeOutBack(seg(u, 0.1, 0.8)), 0);
     const bPulse = 1 + 0.035 * Math.sin(u * 5);
-    const click = u > 2.9 && u < 3.2 ? 0.92 : 1;
-    setT(btn, 540, 410, easeOutBack(seg(u, 0.5, 1.2)) * bPulse * click, 0);
+    const click = u > 2.1 && u < 2.4 ? 0.92 : 1;
+    setT(btn, 540, 410, easeOutBack(seg(u, 0.2, 0.9)) * bPulse * click, 0);
     // дзвіночок гойдається
-    setT(bell, 205, 0, 1, u > 3.0 ? Math.sin(u * 22) * 18 * Math.exp(-(u - 3.0) * 1.3) : 0);
+    setT(bell, 205, 0, 1, u > 2.2 ? Math.sin(u * 22) * 18 * Math.exp(-((u - 2.2) % 3) * 1.3) : 0);
     // курсор рухається до кнопки і клікає
-    const cq = easeInOut(seg(u, 1.4, 2.8));
-    setT(cursor, lerp(860, 600, cq), lerp(760, 420, cq), 1, 0);
-    cursor.setAttribute('opacity', seg(u, 1.4, 1.7));
+    const cq = easeInOut(seg(u, 0.8, 2.0));
+    setT(cursor, lerp(860, 705, cq), lerp(760, 445, cq), 1, 0);
+    cursor.setAttribute('opacity', seg(u, 0.8, 1.1));
     // серця летять угору
     hearts.forEach((h, i) => {
-      const t = u - (3.2 + i * 0.5);
+      const t = u - (2.4 + i * 0.5);
       if (t < 0) { h.setAttribute('opacity', 0); return; }
       const p = (t % 3.5) / 3.5;
       h.setAttribute('opacity', (Math.sin(p * Math.PI) * 0.9).toFixed(3));
@@ -618,11 +618,11 @@ function buildScene5(root) {
 
 // ---------- збірка ----------
 const SCENES = [
-  { start: 0, end: 10, build: buildScene1 },
-  { start: 10, end: 18, build: buildScene2 },
-  { start: 18, end: 38, build: buildScene3 },
-  { start: 38, end: 50, build: buildScene4 },
-  { start: 50, end: 60, build: buildScene5 }
+  { start: 0, end: 12, build: buildScene1 },
+  { start: 12, end: 21, build: buildScene2 },
+  { start: 21, end: 38, build: buildScene3 },
+  { start: 38, end: 47, build: buildScene4 },
+  { start: 47, end: 56, build: buildScene5 }
 ];
 rect(svg, 0, 0, 1080, 1920, 0, '#000');
 SCENES.forEach(s => { s.root = g(svg); s.update = s.build(s.root); });
