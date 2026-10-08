@@ -1,4 +1,4 @@
-# Часовая лавка — интернет-магазин часов
+# Точно — интернет-магазин часов
 
 Готовый магазин на Node.js: каталог с фильтрами и поиском, карточки товаров, корзина, оформление заказа,
 контактная форма и заказ звонка, админ-панель (заказы, заявки, товары, загрузка фото). Без внешних сервисов: данные лежат в одном файле SQLite.
@@ -51,6 +51,9 @@ npm start
 автоматически, всё уже описано в `docker-compose.yml`.
 
 1. Купите домен и VPS с Ubuntu. В DNS домена создайте `A`-запись на IP сервера (и для `www`, если нужен).
+   В Hostinger: hPanel → Домены → ваш домен → DNS / Nameservers → редактор DNS-зоны → запись типа `A`, имя `@`,
+   «Указывает на» — IP сервера. Старые записи `A`, `AAAA` и `CNAME` для `@` и `www` удалите, CDN Hostinger для корня отключите.
+   Обновление DNS занимает до 24 часов.
 2. На сервере установите Docker и клонируйте репозиторий.
 3. Настройте окружение:
    ```bash
@@ -58,7 +61,7 @@ npm start
    cp .env.example .env
    nano .env
    ```
-   Заполните `DOMAIN` (например `shop.example.com`), `SITE_URL=https://shop.example.com`, `ADMIN_PASSWORD`,
+   Заполните `DOMAIN` (например `tochno.shop`), `SITE_URL=https://tochno.shop`, `ADMIN_PASSWORD`,
    `SESSION_SECRET` (получить: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`),
    контакты магазина. `PORT` и `DATA_DIR` не меняйте.
 4. Запустите: `docker compose up -d --build`.

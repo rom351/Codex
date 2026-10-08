@@ -71,7 +71,7 @@ function load(overrides = {}) {
     // Демо-товары по умолчанию только на локальном компьютере, в боевом режиме — выключены
     seedDemo: str('SEED_DEMO', isProd ? 'false' : 'true') !== 'false',
     shop: {
-      name: str('SHOP_NAME', 'Часовая лавка'),
+      name: str('SHOP_NAME', 'Точно'),
       slogan: str('SHOP_SLOGAN', 'Часы, которые хочется носить'),
       phones,
       phone: phones.length ? phones[0].display : '',

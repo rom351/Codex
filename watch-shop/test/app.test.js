@@ -109,7 +109,7 @@ test('витрина: главная, каталог, карточка, служ
     assert.equal((await c.get(url)).status, 200, url);
   }
   const home = await c.text('/');
-  assert.match(home, /Часовая лавка/);
+  assert.match(home, /Точно/);
 
   const product = await c.get('/watch/nordhaus-classic-40');
   assert.equal(product.status, 200);
